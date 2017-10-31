@@ -22,8 +22,8 @@ int main()
 			if(a[i - 1] < a[i] && a[i] == 0)
 			{
 				x= a[i-1];
-			a[i-1] = a[i];
-			a[i] = x;
+				a[i-1] = a[i];
+				a[i] = x;
 			}
 			if(a[i-1] < a[i] && a[i-1] <0 && a[i] > 0)
 			{
