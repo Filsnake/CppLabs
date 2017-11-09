@@ -25,12 +25,10 @@ int main()
 	ifstream file("INPUT.txt");
 	int n;
 	list<int> l;
-	list<int>::iterator it,it2;
+	list<int>::iterator it;
+
 	while (file >> n)
 		l.push_back(n);
-
-	it=l.begin();
-	it2 = l.end();
 
 	for(it = l.begin(); it != l.end(); it++)
 	{
