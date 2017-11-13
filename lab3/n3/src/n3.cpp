@@ -4,33 +4,19 @@
 Результат (ЕСТЬ или НЕТ) занести в текстовый файл OUTPUT.TXT.*/
 #include <iostream>
 #include <fstream>
-#include <ctime>
-#include <cstdlib>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
 
-int main() {
-	srand(time(NULL));
-
-	ofstream textFile("INPUT.txt");
-
-	for(int i=0; i<2; i++)
-	{
-		for(int i=0; i<5; i++)
-			textFile << rand() % 9 << ' ';
-		textFile << endl;
-	}
-	textFile.close();
-
+int main()
+{
 	ofstream text("OUTPUT.txt");
 
 	int n;
 	vector<int> vec;
 
 	ifstream file("INPUT.txt");
-
 
 	while(file >>n)
 		vec.push_back(n);
@@ -48,7 +34,6 @@ int main() {
 
 	text.close();
 	file.close();
-
 
 	return 0;
 }

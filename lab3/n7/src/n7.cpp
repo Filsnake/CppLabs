@@ -1,8 +1,7 @@
 //Вариант 7
 /*7. Дан текстовый файл INPUT.TXT. Проверить в тексте файла правильности расстановки открывающих и закрывающих скобок
- * ‘(‘, ‘)’, ‘{‘, ‘}’, ‘[‘, ‘]’.Использовать стек. Результат (ПРАВИЛЬНО или НЕПРАВИЛЬНО) записать в файл OUTPUT.TXT. */
+ ‘(‘, ‘)’, ‘{‘, ‘}’, ‘[‘, ‘]’.Использовать стек. Результат (ПРАВИЛЬНО или НЕПРАВИЛЬНО) записать в файл OUTPUT.TXT. */
 #include <iostream>
-#include <cstdlib>
 #include <fstream>
 #include <stack>
 
@@ -10,7 +9,6 @@ using namespace std;
 
 int main()
 {
-
 	ofstream textFile("OUTPUT.txt");
 
 	ifstream text("INPUT.txt");

@@ -4,8 +4,6 @@
 Вставить новый элемент в список перед каждым вхождением заданного с клавиатуры элемента.
 Полученный список занести в текстовый файл OUTPUT.TXT.*/
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
 #include <fstream>
 #include <list>
 
@@ -13,18 +11,6 @@ using namespace std;
 
 int main()
 {
-	srand(time(NULL));
-
-	ofstream textFile("INPUT.txt");
-
-	for(int i=0; i<2; i++){
-		for(int i=0; i<5; i++)
-			textFile << rand()% 10<<' ';
-		textFile << endl;
-	}
-
-	textFile.close();
-
 	ofstream text("OUTPUT.txt");
 
 	int n,x,y;
@@ -34,8 +20,6 @@ int main()
 
 	ifstream file("INPUT.txt");
 
-
-
 	while(file>> n)
 		vec.push_back(n);
 
@@ -43,6 +27,7 @@ int main()
 
 	for(it = vec.begin(); it != vec.end(); it++)
 		cout << *it;
+
 	cout << endl;
 
 	cout << "Элемент списка перед которым вставить новый элемент: " << endl;
