@@ -5,7 +5,8 @@
 Полученные списки занести в текстовые файлы ODD.TXT и EVEN.TXT.*/
 #include <iostream>
 #include <fstream>
-#include <list>
+#include <cstdlib>
+
 using namespace std;
 
 int main()
@@ -15,23 +16,29 @@ int main()
 	ofstream text("ODD.txt");
 
 	ifstream file("INPUT.txt");
-	int n;
-	list<int> l;
-	list<int>::iterator it;
 
-	while (file >> n)
-		l.push_back(n);
+	char mas[255];
 
-	for(it = l.begin(); it != l.end(); it++)
+	int y = 0;
+	while(!file.eof())
 	{
-		if(*it %2 ==0)
-			filetext << *it << ' ';
-		if(*it % 2 !=0)
-			text << *it << ' ';
+		file.get(mas[y]);
+		if(mas[y]== ' ')
+			continue;
+		else if(mas[y]== '\n')
+			continue;
+		y++;
 	}
 
-	text.close();
+	for(int i=0; i <y; i++)
+	{
+		if(mas[i]%2 ==0)
+			filetext << mas[i];
+		else
+			text << mas[i];
+	}
+
 	file.close();
+	text.close();
 	filetext.close();
-	return 0;
 }
