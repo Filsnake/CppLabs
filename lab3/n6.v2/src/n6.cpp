@@ -5,7 +5,7 @@
 Полученный список занести в текстовый файл OUTPUT.TXT.*/
 #include <iostream>
 #include <fstream>
-#include <vector>
+
 using namespace std;
 
 int main()
@@ -14,22 +14,31 @@ int main()
 
 	ifstream file("INPUT.txt");
 
-	int n;
-	vector<int> vec;
-	vector<int>::iterator it;
+	int mas[255];
 
-	while(file >> n)
-		vec.push_back(n);
-
-	for(it = vec.begin(); it != vec.end(); it++)
-		if(*it < 0)
+		int y = 0;
+		while(file >> mas[y])
 		{
-			vec.erase(it);
-			break;
+			if(mas[y]== ' ')
+				continue;
+			y++;
 		}
 
-	for(it = vec.begin(); it != vec.end(); it++)
-		text << *it << ' ';
+	for(int i=0; i<y; i++)
+	{
+		if(mas[i]<0)
+		{
+			for( ;i<y; i++)
+			{
+				mas[i]=mas[i+1];
+			}
+			--y;
+			break;
+		}
+	}
+
+	for(int i=0;i <y; i++)
+		text << mas[i] << ' ';
 
 	text.close();
 	file.close();

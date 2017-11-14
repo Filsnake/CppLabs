@@ -4,8 +4,6 @@
 Результат (ЕСТЬ или НЕТ) занести в текстовый файл OUTPUT.TXT.*/
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -13,23 +11,35 @@ int main()
 {
 	ofstream text("OUTPUT.txt");
 
-	int n;
-	vector<int> vec;
-
 	ifstream file("INPUT.txt");
 
-	while(file >>n)
-		vec.push_back(n);
+	int mas[255];
+
+	 int y = 0;
+	 while(file >> mas[y])
+	 {
+	 	if(mas[y]== ' ')
+	 		continue;
+		y++;
+	 }
 
 	int x;
 	cout << "Введите число: ";
 	cin >> x;
 
-	if(find(vec.begin(), vec.end(), x)!=vec.end())
+	bool z=false;
+	for(int i=0; i<y; i++)
+	{
+		if(mas[i] == x)
+		{
+			z = true;
+			break;
+		}
+	}
+	if(z==true)
 		text << "ЕСТЬ";
 	else
-		text<< "НЕТ";
-
+		text << "НЕТ";
 	cout << "Узнать результат можно в OUTPUT.txt :)";
 
 	text.close();

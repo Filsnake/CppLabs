@@ -4,8 +4,6 @@
 Полученное значение занести в текстовый файл OUTPUT.TXT.*/
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <numeric>
 
 using namespace std;
 
@@ -13,19 +11,26 @@ int main()
 {
 	 ofstream text("OUTPUT.txt");
 
-	 int n;
-
-	 vector<double> vec;
-
-	 double average =0;
-
 	 ifstream file("INPUT.txt");
 
-	 while (file >> n)
-		 vec.push_back(n);
+	 int mas[255];
 
-	average = accumulate(vec.begin(), vec.end(), 0.0) / vec.size();
-	text << average;
+	 int y = 0;
+	 while(file >> mas[y])
+	 {
+	 	if(mas[y]== ' ')
+	 		continue;
+		y++;
+	 }
+
+	 float av=0;
+
+	 for(int i=0; i <y; i++)
+		 av+=mas[i];
+
+	 av= av/y;
+
+	 text << av;
 
 	 file.close();
 
