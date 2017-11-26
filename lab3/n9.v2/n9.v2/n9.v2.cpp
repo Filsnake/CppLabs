@@ -18,7 +18,7 @@ int main()
 		text.getline(buf, 255);
 
 		char *str = buf;
-
+		
 		for (int y = 0, i = 0; i < 255; i++, y++)
 		{
 			if (str[y] == '\0')
@@ -33,10 +33,13 @@ int main()
 					filetext << mas[i] << " ";
 				else
 					file << mas[i] << " ";
-				if (mas[i] >= 10)
+
+				while (mas[i] != 0)
+				{
 					y++;
-				if (mas[i] < 0)
-					y++;
+					mas[i] /= 10;
+				}
+
 			}
 
 		}
