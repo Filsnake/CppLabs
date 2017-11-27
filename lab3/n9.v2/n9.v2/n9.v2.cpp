@@ -34,10 +34,18 @@ int main()
 				else
 					file << mas[i] << " ";
 
-				while (mas[i] != 0)
+				while (mas[i] >= 10)
 				{
 					y++;
 					mas[i] /= 10;
+				}
+				if (mas[i] < 0)
+				{
+					while (mas[i] != 0)
+					{
+						y++;
+						mas[i] /= 10;
+					}
 				}
 
 			}
@@ -45,7 +53,7 @@ int main()
 		}
 
 	}
-	delete[] mas;
+	delete[] mas; 
 	delete[] buf;
 
 	file.close();
