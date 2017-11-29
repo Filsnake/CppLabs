@@ -16,10 +16,7 @@ struct list
 	list* next;
 };
 
-void init
-{
 
-}
 int main()
 {
 
