@@ -35,14 +35,14 @@ int main()
 
 	note* mas= new note[255];
 
-	char* mass = new char; //массив для записи чисел из файла
+	char* mass = new char[255]; //массив для записи чисел из файла
 
 	int r =0; // счетчик
 
 	while(!inp.eof())
 	{
-		int* ms = new int;
-		int* m= new int;
+		int* ms = new int[255];
+		int* m= new int[255];
 
 		inp.getline(mas[r].surname, 30, ';');
 
@@ -53,6 +53,7 @@ int main()
 		inp.getline(mass, 255);
 
 //в этой части производится перевод символов в числа и вычисление среднего значения
+
 		int z=0;
 		float q=0;
 		int x=0;
