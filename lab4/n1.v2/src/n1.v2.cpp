@@ -39,13 +39,12 @@ void init(list **begin)
 	//cout << "Год: ";
 	//cin >> (*begin) -> a.date[2];
 
-	(*begin) -> next= NULL;
+	(*begin)->next=NULL;
 
 	list *end= *begin;
-
+	list *end1;
 	for(int i=0; ;i++)
 	{
-
 		cout << "Чтобы прекратить ввод введите 'n', иначе, любой символ: " << endl;
 
 		char x;
@@ -55,7 +54,7 @@ void init(list **begin)
 		{
 			break;
 		}
-		end -> next= NULL;
+
 		end->next= new list;
 		end=end ->next;
 		cout << "Введите фамилию: ";
@@ -75,14 +74,36 @@ void init(list **begin)
 		//cout << "Год: ";
 		//cin >> end->a.date[2];
 
-		if((*begin)->a.surname > end->a.surname)
+		end->next=NULL;
+		if((*begin)->a.surname < end->a.surname)
+				{
+					swap((*begin),end);
+					end=end->next;
+					end->next=NULL;
+					cout << "+";
+				}
+		else
 		{
-			end->next=(*begin);
-			(*begin)=end;
+			cout <<"-";
+		while((*begin)->next)
+		{
+
+			if(((*begin)->a.surname > end->a.surname)&&((*begin)->next->a.surname <= end->a.surname))
+			{
+				end->next=(*begin)->next;
+				end->next=(*begin);
+				(*begin)->next->next=end;
+				(*begin)->next=end;
+			}
+			(*begin)=(*begin)->next;
+			(*begin)->next=NULL;
 		}
-		cout << (*begin)->a.surname << ' ' << (*begin)->next->a.surname  << endl;
-		(*begin)=(*begin)->next;
-		end=end->next;
+		}
+
+		cout << (*begin)->a.surname << ' ' << (*begin)->next->a.surname  <<  endl;
+
+	}
+
 
 		/*while((*begin)->next)
 		{
@@ -96,7 +117,7 @@ void init(list **begin)
 			(*begin)->next=(*begin)->next->next;
 			(*begin)->next=NULL;
 		}*/
-	}
+
 }
 
 void print(list **begin)
@@ -105,7 +126,7 @@ void print(list **begin)
 	while((*begin))
 	{
 	i++;
-	cout << i <<(*begin)->a.surname << endl;
+	cout << i  << '-' <<(*begin)->a.surname << endl;
 	//cout << (*begin)->a.name<< endl;
 	//cout << (*begin)->a.phone_number<< endl;
 	//cout << (*begin)->a.date[0]<< endl;
