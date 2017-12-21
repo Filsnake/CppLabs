@@ -1,3 +1,9 @@
+//Решетников Д.Ю.
+/* Вариант 7
+ реализовать вторую версию программы, вместо массива использовать односвязный список; элементы добавлять таким образом,
+ чтобы сохранялась упорядоченность списка по алфавиту (вставка нового элемента после элемента,
+ который меньше нового элемента и перед большим элементом)*/
+
 #include <iostream>
 #include <cstdlib>
 
@@ -168,39 +174,38 @@ void free(list **begin)
 void menu()
 {
 	int option;
-		do
+	do
+	{
+		cout <<"--------------------------------------------------" << endl;
+		cout << "[1] Начать ввод данных" << endl;
+		cout << "[2] Выход" << endl;
+		cout << "Введите номер вашего выбора: ";
+
+		while(!(cin >> option))
 		{
-			cout <<"--------------------------------------------------" << endl;
-			cout << "[1] Начать ввод данных" << endl;
-			cout << "[2] Выход" << endl;
-			cout << "Введите номер вашего выбора: ";
+			cout << "Ошибка. Введите корректный номер: ";
+			cin.clear();
+			while(cin.get() != '\n');
+		}
 
-			while(!(cin >> option))
-			{
-				cout << "Ошибка. Введите корректный номер: ";
-				cin.clear();
-				while(cin.get() != '\n');
-			}
+		if(option <1 || option >2)
+			cout << endl << "Ошибка. Введите корректный номер" << endl;
 
-			if(option <1 || option >2)
-				cout << endl << "Ошибка. Введите корректный номер" << endl;
+	}while(option <1 || option > 2);
 
-		}while(option <1 || option > 2);
-
-
-		do
+	do
+	{
+		switch(option)
 		{
-			switch(option)
-			{
-				case 1:
-					return;
-					break;
-				case 2:
-					cout << "GOOD BYE!" << endl;
-					exit(0);
-					break;
-			}
-		}while(option !=2);
+			case 1:
+				return;
+				break;
+			case 2:
+				cout << "GOOD BYE!" << endl;
+				exit(0);
+				break;
+		}
+	}while(option !=2);
 }
 
 int menu_2()
@@ -308,13 +313,17 @@ int main()
 				cout << "================================================================" << endl << endl;
 				option=menu_2();
 				break;
-			case 4:
-				cout << "GOOD BYE!" << endl;
-				free(&begin);
-				exit(0);
-				break;
+
 		}
-	}while(option !=5);
+		if(option ==4)
+		{
+			cout << "GOOD BYE!" << endl;
+			free(&begin);
+			exit(0);
+			break;
+		}
+
+	}while(option !=4);
 
 	return 0;
 }
