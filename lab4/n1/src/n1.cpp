@@ -5,7 +5,9 @@
 номер телефона;
 дата рождения (массив из трех чисел).
 Написать программу, выполняющую следующие действия:
-ввод с клавиатуры данных в массив, состоящий из максимум 8 элементов типа note, причем сделать возможность прервать ввод, чтобы можно было не вводить все 8 элементов; после окончания ввода отсортировать элементы массива по алфавиту;
+ввод с клавиатуры данных в массив, состоящий из максимум 8 элементов типа note,
+причем сделать возможность прервать ввод, чтобы можно было не вводить все 8 элементов;
+после окончания ввода отсортировать элементы массива по алфавиту;
 вывод в консоль информации о людях, чьи дни рождения приходятся на месяц, значение которого введено с клавиатуры;
 если таких нет, вывести соответствующее сообщение */
 
@@ -209,6 +211,7 @@ void search(int *N, note *mas)
 			cout << "Месяц: " << mas[i].date[1] << endl;
 			cout << "Год: " << mas[i].date[2] << endl;
 		}
+		cout << endl;
 	}
 	if(z==false)
 		cout << "[Not found]" << endl;
@@ -253,32 +256,41 @@ int main()
 					{
 						switch(op2)
 						{
-							case 1:
-								int x;
-								cout << "Введите колличество строк: ";
-								cin >> x;
-								N+=x;
-								opt=menu_2();
-								break;
 							case 2:
 								search(&count, mas);
 								cout << endl <<"==================================" << endl << endl;
-								opt=menu_2();
+								opt=menu_3(&op2);
 								break;
 							case 3:
 								sort(&count, mas);
 								print(&count, mas);
-								opt=menu_2();
+								opt=menu_3(&op2);
 								break;
 						}
+
+						if (op2 == 1)
+						{
+							int x;
+							cout << "Введите колличество строк: ";
+							while(!(cin >> x))
+							{
+								cout <<"[Ошибка] Введите число: ";
+								cin.clear();
+								while(cin.get() !='\n');
+							}
+							cout << endl;
+							N+=x;
+							cout << "Строк теперь: " << '[' << N-count << ']' << endl;
+							break;
+						}
+
 						if(op2 == 4)
 						{
 							cout << "GOOD BYE!" << endl;
 							delete[] mas;
-							exit(0);
 							break;
 						}
-					}while(op2 <1 || op2 > 4);
+					}while(op2 !=1 || op2 > 4);
 				}
 				opt=menu_2();
 				break;
@@ -315,45 +327,45 @@ int main()
 			{
 				switch(op2)
 				{
-					case 1:
-						int x;
-						cout << "Введите колличество строк: ";
-						while(!(cin >> x))
-						{
-							cout <<"[Ошибка] Введите число: ";
-							cin.clear();
-							while(cin.get() !='\n');
-						}
-
-						cout << endl;
-						N+=x;
-						cout << "Строк теперь: " << '[' << N-count << ']' << endl;
-						opt=menu_2();
-						break;
 					case 2:
 						search(&count, mas);
-						opt=menu_2();
+						cout << endl <<"==================================" << endl << endl;
+						opt=menu_3(&op2);
 						break;
 					case 3:
 						sort(&count, mas);
 						print(&count, mas);
-						opt=menu_2();
+						opt=menu_3(&op2);
 						break;
+				}
+				if (op2 == 1)
+				{
+					int x;
+					cout << "Введите колличество строк: ";
+					while(!(cin >> x))
+					{
+						cout <<"[Ошибка] Введите число: ";
+						cin.clear();
+						while(cin.get() !='\n');
+					}
+					cout << endl;
+					N+=x;
+					cout << "Строк теперь: " << '[' << N-count << ']' << endl;
+					opt=menu_2();
+					break;
 				}
 				if(op2 == 4)
 				{
 					cout << "GOOD BYE!" << endl;
 					delete[] mas;
-					exit(0);
 					break;
 				}
-			}while(op2 <1 || op2 > 4);
+			}while(op2 !=1 || op2 > 4);
 		}
 		if(opt == 5)
 		{
 			cout << "GOOD BYE!" << endl;
 			delete[] mas;
-			exit(0);
 			break;
 		}
 	}while(opt != 5);
