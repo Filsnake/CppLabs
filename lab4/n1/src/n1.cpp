@@ -125,16 +125,14 @@ void ins(int *N, note *mas, int *count) //Вставка элементов
 //_________________________________________________
 	cout << "Введите фамилию: ";
 	cin >> buff;
-	int Y = strlen(buff);
-	mas[*count].surname = new char[Y];
-	for (int i = 0; i <= Y; i++)
+	mas[*count].surname = new char[strlen(buff)];
+	for (int i = 0; i <= strlen(buff); i++)
 		mas[*count].surname[i] = buff[i];
 //_________________________________________________
 	cout << "Имя: ";
 	cin >> buff;
-	Y = strlen(buff);
-	mas[*count].name = new char[Y];
-	for (int i = 0; i <= Y; i++)
+	mas[*count].name = new char[strlen(buff)];
+	for (int i = 0; i <= strlen(buff); i++)
 		mas[*count].name[i] = buff[i];
 //_________________________________________________
 	char *X = new char[255];
