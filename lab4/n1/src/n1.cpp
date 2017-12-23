@@ -273,27 +273,12 @@ int main()
 			count++;
 			if (count == N)
 			{
-				cout << "Строчки закончилсь! Выберите действие в меню +" << endl;
+				cout << "Строчки закончилсь! Выберите действие в меню" << endl;
 				int op2 = menu_3(&op2);
 				do
 				{
 					switch (op2)
 					{
-						if (op2 == 1)
-						{
-							int x;
-							cout << "Введите колличество строк: ";
-							while (!(cin >> x))
-							{
-								cout << "[Ошибка] Введите число: ";
-								cin.clear();
-								while (cin.get() != '\n');
-							}
-							cout << endl;
-							N += x;
-							cout << "Строк теперь: " << '[' << N - count << ']' << endl;
-							break;
-						}
 					case 2:
 						search(&count, mas);
 						cout << endl << "==================================" << endl << endl;
@@ -303,6 +288,21 @@ int main()
 						sort(&count, mas);
 						print(&count, mas);
 						opt = menu_3(&op2);
+						break;
+					}
+					if (op2 == 1)
+					{
+						int x;
+						cout << "Введите колличество строк: ";
+						while (!(cin >> x))
+						{
+							cout << "[Ошибка] Введите число: ";
+							cin.clear();
+							while (cin.get() != '\n');
+						}
+						cout << endl;
+						N += x;
+						cout << "Строк теперь: " << '[' << N - count << ']' << endl;
 						break;
 					}
 					if (op2 == 4)
@@ -343,7 +343,7 @@ int main()
 		}
 		if (count == N)//Если строчки закончились
 		{
-			cout << "Строчки закончилсь! Выберите действие в меню -" << endl;
+			cout << "Строчки закончилсь! Выберите действие в меню" << endl;
 			int op2 = menu_3(&op2);
 			do
 			{
