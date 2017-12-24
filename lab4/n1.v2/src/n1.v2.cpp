@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
@@ -23,13 +24,13 @@ struct list
 	list* next;
 };
 
-bool phone(const char *X) // проверка номера телефона на отсутствие символов
+bool phone(const char *buff) // проверка номера телефона на отсутствие символов
 {
 	const char *temp = "0123456789";
 
-	for (int i = 0; i<strlen(X); i++)
+	for (int i = 0; i<strlen(buff); i++)
 	{
-		if (!strchr(temp, X[i]))
+		if (!strchr(temp, buff[i]))
 			return false;
 	}
 	return true;
@@ -39,7 +40,6 @@ void sort(list **begin) //сортировка по алфавиту
 {
 	char *buff = new char[255]; //выделение памяти в буфер
 
-	char *X = new char[255];// выделение памяти для будущего номера телефона
 	cout << endl << "================================================================" << endl << endl;
 
 	list *sort = new list;
@@ -47,23 +47,22 @@ void sort(list **begin) //сортировка по алфавиту
 	cout << "Введите фамилию: ";
 	cin >> buff;
 	sort->a.surname = new char[strlen(buff)];
-	for (int i = 0; i <= strlen(buff); i++)
-		sort->a.surname[i] = buff[i];
+	strcpy(sort->a.surname, buff);
 
 	cout << "Имя: ";
 	cin >> buff;
 	sort->a.name = new char[strlen(buff)];
-	for (int i = 0; i <= strlen(buff); i++)
-		sort->a.name[i] = buff[i];
+	strcpy(sort->a.name, buff);
 
 	cout << "Телефон: ";
-	cin >> X;
-	while (!phone(X)) {
+	cin >> buff;
+	while (!phone(buff)) {
 		cout << "[Ошибка] В номере должны быть только цифры !" << endl;
 		cout << "Телефон: ";
-		cin >> X;
+		cin >> buff;
 	}
-	sort->a.phone_number = X;
+	sort->a.phone_number = new char[strlen(buff)];
+	strcpy(sort->a.phone_number, buff);
 
 	cout << "Дата рождения" << endl;
 	cout << "День: ";
@@ -231,7 +230,7 @@ void menu() //Меню №1
 	} while (option != 2);
 }
 
-int menu_2()//Меню №
+int menu_2()//Меню №2
 {
 	int option;
 	do
@@ -270,29 +269,26 @@ int main()
 
 	char *buff = new char[255];
 //____________________________________________
-	cout << endl;
 	cout << "Введите фамилию: ";
 	cin >> buff;
 	begin->a.surname = new char[strlen(buff)];
-	for (int i = 0; i <= strlen(buff); i++)
-		begin->a.surname[i] = buff[i];
+	strcpy(begin->a.surname, buff);
 //____________________________________________
 	cout << "Имя: ";
 	cin >> buff;
 	begin->a.name = new char[strlen(buff)];
-	for (int i = 0; i <= strlen(buff); i++)
-		begin->a.name[i] = buff[i];
+	strcpy(begin->a.name, buff);
 //____________________________________________
-	char *X = new char[255];
 
 	cout << "Телефон: ";
-	cin >> X;
-	while (!phone(X)) {
+	cin >> buff;
+	while (!phone(buff)) {
 		cout << "[Ошибка] В номере должны быть только цифры !" << endl;
 		cout << "Телефон: ";
-		cin >> X;
+		cin >> buff;
 	}
-	begin->a.phone_number = X;
+	begin->a.phone_number = new char[strlen(buff)];
+	strcpy(begin->a.phone_number, buff);
 //______________________________________________
 	cout << "Дата рождения" << endl;
 
@@ -346,17 +342,14 @@ int main()
 			cout << "================================================================" << endl << endl;
 			option = menu_2();
 			break;
-
 		}
 		if (option == 4)
 		{
 			cout << "GOOD BYE!" << endl;
+			delete[] buff;
 			free(&begin);
-			delete[] X;
 			exit(0);
-			break;
 		}
-
 	} while (option != 4);
 
 	return 0;

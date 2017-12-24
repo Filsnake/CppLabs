@@ -18,7 +18,7 @@
 
 using namespace std;
 
-struct note //Структура
+struct note
 {
 	char *surname;
 	char *name;
@@ -55,7 +55,6 @@ void menu() //Меню №1
 		case 2:
 			cout << "GOOD BYE!" << endl;
 			exit(0);
-			break;
 		}
 	} while (option != 2);
 }
@@ -105,13 +104,13 @@ int menu_3(int *op2) //Меню №3
 	return *op2;
 }
 
-bool phone(const char *X) //Проверка номера телефона на наличие посторонних символов
+bool phone(const char *buff) //Проверка номера телефона на наличие посторонних символов
 {
 	const char *temp = "0123456789";
 
-	for (int i = 0; i<strlen(X); i++)
+	for (int i = 0; i<strlen(buff); i++)
 	{
-		if (!strchr(temp, X[i]))
+		if (!strchr(temp, buff[i]))
 			return false;
 	}
 	return true;
@@ -122,30 +121,29 @@ void ins(int *N, note *mas, int *count) //Вставка элементов
 	char *buff = new char[255];
 
 	cout << endl;
-//_________________________________________________
+	//_________________________________________________
 	cout << "Введите фамилию: ";
 	cin >> buff;
 	mas[*count].surname = new char[strlen(buff)];
-	for (int i = 0; i <= strlen(buff); i++)
-		mas[*count].surname[i] = buff[i];
-//_________________________________________________
+	strcpy(mas[*count].surname, buff);
+	//_________________________________________________
 	cout << "Имя: ";
 	cin >> buff;
 	mas[*count].name = new char[strlen(buff)];
-	for (int i = 0; i <= strlen(buff); i++)
-		mas[*count].name[i] = buff[i];
-//_________________________________________________
-	char *X = new char[255];
+	strcpy(mas[*count].name, buff);
+	//_________________________________________________
 
 	cout << "Телефон: ";
-	cin >> X;
-	while (!phone(X)) {
+	cin >> buff;
+	while (!phone(buff)) {
 		cout << "[Ошибка] В номере должны быть только цифры !" << endl;
 		cout << "Телефон: ";
-		cin >> X;
+		cin >> buff;
 	}
-	mas[*count].phone_number = X;
-//__________________________________________________
+	mas[*count].phone_number = new char[strlen(buff)];
+	strcpy(mas[*count].phone_number, buff);
+
+	//__________________________________________________
 	cout << "Дата рождения" << endl;
 	cout << "День: ";
 	while (!(cin >> mas[*count].date[0]))
@@ -174,7 +172,7 @@ void ins(int *N, note *mas, int *count) //Вставка элементов
 		while (cin.get() != '\n');
 	}
 	cout << endl;
-//_______________________________________________________________________
+	//_______________________________________________________________________
 	cout << "Осталось строк: " << '[' << *N - *count - 1 << ']' << endl;
 
 	delete[] buff;
@@ -182,11 +180,11 @@ void ins(int *N, note *mas, int *count) //Вставка элементов
 	cin.ignore();
 }
 
-void sort(int *N, note *mas) //Сортировка
+void sort(int *count, note *mas) //Сортировка
 {
-	for (int j = 0; j<*N - 1; j++)
+	for (int j = 0; j<*count - 1; j++)
 	{
-		for (int i = 0; i<*N - 1; i++)
+		for (int i = 0; i<*count - 1; i++)
 		{
 			if (mas[i].surname[0] > mas[i + 1].surname[0])
 				swap(mas[i], mas[i + 1]);
@@ -195,9 +193,9 @@ void sort(int *N, note *mas) //Сортировка
 	cout << "==================================" << endl;
 }
 
-void print(int *N, note *mas) //Вывод элементов
+void print(int *count, note *mas) //Вывод элементов
 {
-	for (int i = 0; i<*N; i++)
+	for (int i = 0; i<*count; i++)
 	{
 		cout << endl;
 		cout << "Фамилия: " << mas[i].surname << endl;
@@ -211,7 +209,7 @@ void print(int *N, note *mas) //Вывод элементов
 	cout << endl << "==================================" << endl << endl;
 }
 
-void search(int *N, note *mas) //Поиск по месяцу рождения
+void search(int *count, note *mas) //Поиск по месяцу рождения
 {
 	int x;
 	cout << endl << "Введите месяц рождения: ";
@@ -221,7 +219,7 @@ void search(int *N, note *mas) //Поиск по месяцу рождения
 
 	bool z = false;
 
-	for (int i = 0; i<*N; i++)
+	for (int i = 0; i<*count; i++)
 	{
 		if (mas[i].date[1] == x)
 		{
@@ -233,11 +231,12 @@ void search(int *N, note *mas) //Поиск по месяцу рождения
 			cout << "День: " << mas[i].date[0] << endl;
 			cout << "Месяц: " << mas[i].date[1] << endl;
 			cout << "Год: " << mas[i].date[2] << endl;
+			cout << endl;
 		}
-		cout << endl;
 	}
 	if (z == false)
-		cout << "[Not found]" << endl;
+		cout << endl <<  "[Not found]" << endl;
+	cout << endl << "==================================" << endl << endl;
 }
 
 int main()
@@ -246,11 +245,11 @@ int main()
 
 	menu();
 
-	int N;
+	int N=0;
 	cout << endl << "Введите колличество строк: ";
-	while (!(cin >> N))
+	while (!(cin >> N)|| N==0)
 	{
-		cout << "[Ошибка] Введите число: ";
+		cout << "[Ошибка] Введите число больше 0: ";
 		cin.clear();
 		while (cin.get() != '\n');
 	}
@@ -262,6 +261,48 @@ int main()
 
 	ins(&N, mas, &count);
 	count++;
+
+	if (count == N)
+	{
+		cout << "Строчки закончилсь! Выберите действие в меню" << endl;
+		int op2 = menu_3(&op2);
+		do
+		{
+			switch (op2)
+			{
+			case 2:
+				search(&count, mas);
+				op2 = menu_3(&op2);
+				break;
+			case 3:
+				sort(&count, mas);
+				print(&count, mas);
+				op2 = menu_3(&op2);
+				break;
+			}
+			if (op2 == 1)
+			{
+				int x;
+				cout << "Введите колличество строк: ";
+				while (!(cin >> x))
+				{
+					cout << "[Ошибка] Введите число: ";
+					cin.clear();
+					while (cin.get() != '\n');
+				}
+				cout << endl;
+				N += x;
+				cout << "Строк теперь: " << '[' << N - count << ']' << endl;
+				break;
+			}
+			if (op2 == 4)
+			{
+				cout << "GOOD BYE!" << endl;
+				delete[] mas;
+				exit(0);
+			}
+		} while (op2 != 1 || op2 != 4);
+	}
 
 	int opt = menu_2();
 	do
@@ -281,13 +322,12 @@ int main()
 					{
 					case 2:
 						search(&count, mas);
-						cout << endl << "==================================" << endl << endl;
-						opt = menu_3(&op2);
+						op2 = menu_3(&op2);
 						break;
 					case 3:
 						sort(&count, mas);
 						print(&count, mas);
-						opt = menu_3(&op2);
+						op2 = menu_3(&op2);
 						break;
 					}
 					if (op2 == 1)
@@ -310,7 +350,6 @@ int main()
 						cout << "GOOD BYE!" << endl;
 						delete[] mas;
 						exit(0);
-						break;
 					}
 				} while (op2 != 1 || op2 != 4);
 			}
@@ -351,13 +390,12 @@ int main()
 				{
 				case 2:
 					search(&count, mas);
-					cout << endl << "==================================" << endl << endl;
-					opt = menu_3(&op2);
+					op2 = menu_3(&op2);
 					break;
 				case 3:
 					sort(&count, mas);
 					print(&count, mas);
-					opt = menu_3(&op2);
+					op2 = menu_3(&op2);
 					break;
 				}
 				if (op2 == 1)
@@ -381,7 +419,6 @@ int main()
 					cout << "GOOD BYE!" << endl;
 					delete[] mas;
 					exit(0);
-					break;
 				}
 			} while (op2 != 1 || op2 != 4);
 		}
@@ -390,7 +427,6 @@ int main()
 			cout << "GOOD BYE!" << endl;
 			delete[] mas;
 			exit(0);
-			break;
 		}
 	} while (opt != 5);
 
