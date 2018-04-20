@@ -28,9 +28,11 @@ public:
 	void Search(int &option, List &clas, Student &a);
 	void Show();
 	void Show2(ListElem **x);
+	void Sort(int &option);
 	void Menu(ListElem **x);
 	void Free();
 	void Free2(ListElem **x);
+	void Empty(bool &e);
 };
 
 void List::Add(Student &a)
@@ -142,13 +144,6 @@ void List::Show()
 {
 	ListElem *Show = Begin;
 
-	if (Show == NULL)
-	{
-		cout << "================================================================" << endl << endl;
-		cout << " EMPTY" << endl;
-		cout << "================================================================" << endl << endl;
-	}
-
 	while (Show != NULL)
 	{
 		cout << "================================================================" << endl << endl;
@@ -181,6 +176,54 @@ void List::Show2(ListElem **x)
 
 }
 
+void List::Sort(int &option) 
+{
+	int x,y,z;
+	ListElem *New = NULL;
+	while (Begin != NULL)
+	{
+		ListElem *Sort = Begin;
+
+		if (option == 1) x = Sort->a.date[0];
+		if (option == 2) x = Sort->a.date[1];
+		if (option == 3) x = Sort->a.date[2];
+
+		if (New != NULL)
+		{
+			if (option == 1) y = New->a.date[0];
+			if (option == 2) y = New->a.date[1];
+			if (option == 3) y = New->a.date[2];
+		}
+
+
+		Begin = Begin->next;
+		if (New == NULL || x < y)
+		{
+			Sort->next = New;
+			New = Sort;
+		}
+		else
+		{
+			ListElem *Current = New;
+
+			if (Current->next != NULL)
+			{
+				if (option == 1) z = Current->next->a.date[0];
+				if (option == 2) z = Current->next->a.date[1];
+				if (option == 3) z = Current->next->a.date[2];
+			}
+
+			while (Current->next != NULL && !(x < z))
+			{
+				Current = Current->next;
+			}
+			Sort->next = Current->next;
+			Current->next = Sort;
+		}
+	}
+	Begin = New;
+}
+
 void List::Menu(ListElem **x)
 {
 	int option;
@@ -198,6 +241,8 @@ void List::Menu(ListElem **x)
 
 		if (option <1 || option >2) cout << "Error. Enter the correct choice" << endl;
 	} while (option < 1 || option>2);
+
+	cout << "================================================================" << endl << endl;
 
 	do
 	{
@@ -245,7 +290,17 @@ void List::Free2(ListElem **x)
 		Free2 = Free3;
 		Free3 = Free3->next;
 	}
-	
+}
+
+void List::Empty(bool &e)
+{
+	if (Begin == NULL)
+	{
+		cout << "================================================================" << endl << endl;
+		cout << " EMPTY" << endl;
+		cout << "================================================================" << endl << endl;
+		e = true;
+	}
 }
 
 void Menu();
@@ -253,6 +308,8 @@ void Menu();
 void Menu2(List &clas, Student &a);
 
 void Menu3(List &clas, Student &a);
+
+void Menu4(List &clas, Student &a);
 
 bool Phone(const char *buf);
 
@@ -290,6 +347,8 @@ void Menu()
 		if (option <1 || option >2) cout << "Error. Enter the correct choice" << endl;
 	} while (option < 1 || option >2);
 
+	cout << "================================================================" << endl << endl;
+
 	do
 	{
 		switch (option)
@@ -307,13 +366,14 @@ void Menu()
 void Menu2(List &clas, Student &a)
 {
 	int option;
-
+	bool e = false;
 	do
 	{
 		cout << "1.Continue" << endl
 			 << "2.Show all" << endl
-			 << "3.Search" << endl
-			 << "4.Exit" << endl;
+			 << "3.Sort" << endl
+			 << "4.Search" << endl
+			 << "5.Exit" << endl;
 
 		while (!(cin >> option))
 		{
@@ -322,8 +382,10 @@ void Menu2(List &clas, Student &a)
 			while (cin.get() != '\n');
 		}
 
-		if (option <1 || option >4) cout << "Error. Enter the correct choice" << endl;
-	} while (option < 1 || option > 4);
+		if (option < 1 || option > 5) cout << "Error. Enter the correct choice" << endl;
+	} while (option < 1 || option > 5);
+
+	cout << "================================================================" << endl << endl;
 
 	do
 	{
@@ -334,20 +396,42 @@ void Menu2(List &clas, Student &a)
 			Menu2(clas,a);
 			break;
 		case 2:
+			clas.Empty(e);
+			if (e == true)
+			{
+				Menu2(clas, a);
+				break;
+			}
 			clas.Show();
 			Menu2(clas,a);
 			break;
-		case  3:
+		case 3:
+			clas.Empty(e);
+			if (e == true)
+			{
+				Menu2(clas, a);
+				break;
+			}
+			Menu4(clas, a);
+			Menu2(clas, a);
+			break;
+		case  4:
+			clas.Empty(e);
+			if (e == true)
+			{
+				Menu2(clas, a);
+				break;
+			}
 			Menu3(clas, a);
 			Menu2(clas, a);
 			break;
-		case 4:
+		case 5:
 			cout << "Bye! ";
 			clas.Free();
 			system("pause");
 			exit(0);
 		}
-	} while (option != 3);
+	} while (option != 5);
 }
 
 void Menu3(List &clas, Student &a)
@@ -373,29 +457,31 @@ void Menu3(List &clas, Student &a)
 		if (option < 1 || option >6) cout << "Error. Enter the correct choice" << endl;
 	} while (option < 1|| option > 6);
 
+	cout << "================================================================" << endl << endl;
+
 	do
 	{
 		switch (option)
 		{
 		case 1:
 			clas.Search(option, clas ,a);
-			Menu3(clas, a);
+			Menu2(clas, a);
 			break;
 		case 2:
 			clas.Search(option, clas, a);
-			Menu3(clas, a);
+			Menu2(clas, a);
 			break;
 		case 3:
 			clas.Search(option, clas, a);
-			Menu3(clas, a);
+			Menu2(clas, a);
 			break;
 		case 4:
 			clas.Search(option, clas ,a);
-			Menu3(clas, a);
+			Menu2(clas, a);
 			break;
 		case 5:
 			clas.Search(option, clas, a);
-			Menu3(clas, a);
+			Menu2(clas, a);
 			break;
 		case 6:
 			Menu2(clas, a);
@@ -403,6 +489,53 @@ void Menu3(List &clas, Student &a)
 		}
 
 	} while (option != 6);
+}
+
+void Menu4(List &clas, Student &a)
+{
+	int option;
+
+	do {
+		cout << "1.Sort by day" << endl
+			 << "2.Sort by month" << endl
+			 << "3.Sort by year" << endl
+			 << "4.Exit" << endl
+			 << "Your choice :";
+		 
+		while (!(cin >> option))
+		{
+			cout << "Error. Enter the correct choice" << endl << "Your choice: ";
+			cin.clear();
+			while (cin.get() != '\n');
+		}
+
+		if (option < 1 || option >4) cout << "Error. Enter the correct choice" << endl;
+	} while (option < 1 || option > 4);
+
+	cout << "================================================================" << endl << endl;
+
+	do
+	{
+		switch (option)
+		{
+		case 1:
+			clas.Sort(option);
+			Menu2(clas, a);
+			break;
+		case 2:
+			clas.Sort(option);
+			Menu2(clas, a);
+			break;
+		case 3:
+			clas.Sort(option);
+			Menu2(clas, a);
+			break;
+		case 4:
+			Menu2(clas, a);
+			break;
+		}
+
+	} while (option != 4);
 }
 
 bool Phone(const char *buf)
@@ -445,8 +578,6 @@ void Insert(List &clas, Student &a)
 	}
 	a.phone_number = new char[strlen(buf)];
 	strcpy(a.phone_number, buf);
-
-	////////////////////////////////////////////////////////////////////////
 
 	cout << "Date" << endl;
 	cout << "Day: ";
