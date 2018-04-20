@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ private:
 public:
 	ListElem *Begin = NULL;
 	void Add(Student &a);
-	void Search(int &option, List &clas, Student &a);
+	void Search(int &option);
 	void Show();
 	void Show2(ListElem **x);
 	void Sort(int &option);
@@ -52,7 +53,7 @@ void List::Add(Student &a)
 	Begin = Add;
 }
 
-void List::Search(int &option, List &clas, Student &a)
+void List::Search(int &option)
 {
 	ListElem *Search = Begin;
 
@@ -303,6 +304,8 @@ void List::Empty(bool &e)
 	}
 }
 
+char* Read();
+
 void Menu();
 
 void Menu2(List &clas, Student &a);
@@ -310,6 +313,10 @@ void Menu2(List &clas, Student &a);
 void Menu3(List &clas, Student &a);
 
 void Menu4(List &clas, Student &a);
+
+char *Read();
+
+void Check(int &x, string &y);
 
 bool Phone(const char *buf);
 
@@ -464,23 +471,23 @@ void Menu3(List &clas, Student &a)
 		switch (option)
 		{
 		case 1:
-			clas.Search(option, clas ,a);
+			clas.Search(option);
 			Menu2(clas, a);
 			break;
 		case 2:
-			clas.Search(option, clas, a);
+			clas.Search(option);
 			Menu2(clas, a);
 			break;
 		case 3:
-			clas.Search(option, clas, a);
+			clas.Search(option);
 			Menu2(clas, a);
 			break;
 		case 4:
-			clas.Search(option, clas ,a);
+			clas.Search(option);
 			Menu2(clas, a);
 			break;
 		case 5:
-			clas.Search(option, clas, a);
+			clas.Search(option);
 			Menu2(clas, a);
 			break;
 		case 6:
@@ -538,6 +545,27 @@ void Menu4(List &clas, Student &a)
 	} while (option != 4);
 }
 
+char *Read()
+{
+	char buf[255];
+	cin >> buf;
+	char* str = new char[strlen(buf)];
+	strcpy(str, buf);
+	return str;
+}
+
+void Check(int &x, string &y)
+{
+	cout << y;
+	while (!(cin >> x))
+	{
+		cout << "[Error] Only numbers" << endl;
+		cout << "Day: ";
+		cin.clear();
+		while (cin.get() != '\n');
+	}
+}
+
 bool Phone(const char *buf)
 {
 	const char *temp = "0123456789";
@@ -552,22 +580,15 @@ bool Phone(const char *buf)
 
 void Insert(List &clas, Student &a)
 {
-	char *buf = new char[255];
-
+	char buf[255];
 	cout << "Enter name: ";
-	cin >> buf;
-	a.name = new char[strlen(buf)];
-	strcpy(a.name, buf);
+	a.name = Read();
 
 	cout << "Enter surname: ";
-	cin >> buf;
-	a.surname = new char[strlen(buf)];
-	strcpy(a.surname, buf);
+	a.surname = Read();
 
 	cout << "Enter patronymic: ";
-	cin >> buf;
-	a.patronymic = new char[strlen(buf)];
-	strcpy(a.patronymic, buf);
+	a.patronymic = Read();
 
 	cout << "Enter phone number: ";
 	cin >> buf;
@@ -580,35 +601,22 @@ void Insert(List &clas, Student &a)
 	strcpy(a.phone_number, buf);
 
 	cout << "Date" << endl;
-	cout << "Day: ";
-	while (!(cin >> a.date[0]))
-	{
-		cout << "[Error] Only numbers" << endl;
-		cout << "Day: ";
-		cin.clear();
-		while (cin.get() != '\n');
-	}
+	string d("Day: ");
+	int x = a.date[0];
+	Check(x,d);
+	a.date[0]= x;
 
-	cout << "Month: ";
-	while (!(cin >> a.date[1]))
-	{
-		cout << "[Error] Only numbers" << endl;
-		cout << "Month: ";
-		cin.clear();
-		while (cin.get() != '\n');
-	}
+	string m("Month: ");
+	int y = a.date[1];
+	Check(y, m); 
+	a.date[1] = y;
 
-	cout << "Year: ";
-	while (!(cin >> a.date[2]))
-	{
-		cout << "[Error] Only numbers" << endl;
-		cout << "Year: ";
-		cin.clear();
-		while (cin.get() != '\n');
-	}
+	string g("Year: ");
+	int z = a.date[2];
+	Check(z, g);
+	a.date[2] = z;
 
 	clas.Add(a);
-	delete[] buf;
 
 	cout << endl << "================================================================" << endl << endl;
 }
