@@ -18,22 +18,22 @@ public:
 class List 
 {
 private:
-	struct  ListElem
+	struct ListElem
 	{
 		Student a;
 		ListElem *next;
 	};
-public:
 	ListElem *Begin = NULL;
+	void Show2(ListElem *x);
+	void Free2(ListElem *x);
+	void Menu(ListElem *x);
+public:
 	void Add(Student &a);
-	void Search(int &option);
-	void Show();
-	void Show2(ListElem **x);
-	void Sort(int &option);
-	void Menu(ListElem **x);
-	void Free();
-	void Free2(ListElem **x);
-	void Empty(bool &e);
+	void Search(int option);
+	void Show();	
+	void Sort(int option);	
+	void Free();	
+	bool Empty();
 };
 
 void List::Add(Student &a)
@@ -53,7 +53,7 @@ void List::Add(Student &a)
 	Begin = Add;
 }
 
-void List::Search(int &option)
+void List::Search(int option)
 {
 	ListElem *Search = Begin;
 
@@ -89,8 +89,8 @@ void List::Search(int &option)
 				}
 				if (z == true)
 				{
-					Show2(&Search);
-					Menu(&Search);
+					Show2(Search);
+					Menu(Search);
 					break;
 				}
 			}
@@ -127,7 +127,7 @@ void List::Search(int &option)
 			}
 			if (z == false)
 			{
-				Show2(&Search);
+				Show2(Search);
 				break;
 			}
 			Search = Search->next;
@@ -161,9 +161,9 @@ void List::Show()
 	}
 }
 
-void List::Show2(ListElem **x)
+void List::Show2(ListElem *x)
 {
-	ListElem *Show = *x;
+	ListElem *Show = x;
 	cout << endl << "================================================================" << endl << endl;
 	cout << "Name: " << Show->a.name << endl;
 	cout << "Surname: " << Show->a.surname << endl;
@@ -177,7 +177,7 @@ void List::Show2(ListElem **x)
 
 }
 
-void List::Sort(int &option) 
+void List::Sort(int option) 
 {
 	int x,y,z;
 	ListElem *New = NULL;
@@ -225,7 +225,7 @@ void List::Sort(int &option)
 	Begin = New;
 }
 
-void List::Menu(ListElem **x)
+void List::Menu(ListElem *x)
 {
 	int option;
 	do {
@@ -268,11 +268,11 @@ void List::Free()
 	}
 }
 
-void List::Free2(ListElem **x)
+void List::Free2(ListElem *x)
 {
 	ListElem *Free2 = Begin;
 
-	if (*x == Free2)
+	if (x == Free2)
 	{
 		Begin = Free2->next;
 		delete Free2;
@@ -282,7 +282,7 @@ void List::Free2(ListElem **x)
 
 	while (Free3)
 	{
-		if (Free3 == *x)
+		if (Free3 == x)
 		{
 			Free2->next = Free3->next;
 			delete Free3;
@@ -293,14 +293,14 @@ void List::Free2(ListElem **x)
 	}
 }
 
-void List::Empty(bool &e)
+bool List::Empty()
 {
 	if (Begin == NULL)
 	{
 		cout << "================================================================" << endl << endl;
 		cout << " EMPTY" << endl;
 		cout << "================================================================" << endl << endl;
-		e = true;
+		return true;
 	}
 }
 
@@ -318,7 +318,7 @@ char *Read();
 
 void Check(int &x, string &y);
 
-bool Phone(const char *buf);
+bool Num(const char *buf);
 
 void Insert(List &clas, Student &a);
 
@@ -403,9 +403,8 @@ void Menu2(List &clas, Student &a)
 			Menu2(clas,a);
 			break;
 		case 2:
-			clas.Empty(e);
-			if (e == true)
-			{
+			if(clas.Empty() == true)
+			{			
 				Menu2(clas, a);
 				break;
 			}
@@ -413,8 +412,7 @@ void Menu2(List &clas, Student &a)
 			Menu2(clas,a);
 			break;
 		case 3:
-			clas.Empty(e);
-			if (e == true)
+			if (clas.Empty() == true)
 			{
 				Menu2(clas, a);
 				break;
@@ -423,8 +421,7 @@ void Menu2(List &clas, Student &a)
 			Menu2(clas, a);
 			break;
 		case  4:
-			clas.Empty(e);
-			if (e == true)
+			if (clas.Empty() == true)
 			{
 				Menu2(clas, a);
 				break;
@@ -566,7 +563,7 @@ void Check(int &x, string &y)
 	}
 }
 
-bool Phone(const char *buf)
+bool Num(const char *buf)
 {
 	const char *temp = "0123456789";
 
@@ -592,7 +589,7 @@ void Insert(List &clas, Student &a)
 
 	cout << "Enter phone number: ";
 	cin >> buf;
-	while (!Phone(buf)) {
+	while (!Num(buf)) {
 		cout << "[Error] Only numbers" << endl;
 		cout << "Enter phone number: ";
 		cin >> buf;
