@@ -8,11 +8,11 @@ using namespace std;
 class Student
 {
 public:
-		char *surname;
-		char *name;
-		char *patronymic;
-		char *phone_number;
-		int date[3];
+	char *surname;
+	char *name;
+	char *patronymic;
+	char *phone_number;
+	int date[3];
 };
 
 class List 
