@@ -2,49 +2,127 @@
 #include <conio.h>
 #include <windows.h>
 #include <fstream>
+#include <ctime>
 
 using namespace std;
 
-bool gameOver;
-
-const int width = 40;
-const int height = 20;
-
-int x, y, fruitX, fruitY, score;
-int tailX[100], tailY[100];
-int nTail;
-enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
-
-eDirection dir;
-
-void Setup() 
+class Snake
 {
-	gameOver = false;
-	dir = STOP;
-	x = width / 2;
-	y = height / 2;
-	fruitX = rand() % width;
-	fruitY = rand() % height;
-	score = 0;
+public:
+	Snake() { fruitX = rand() % width; fruitY = rand() % height; score = 0; }
+	bool gameOver=false;
+	const int width = 40;
+	const int height = 20;
+	int x, y, fruitX, fruitY, score;
+
+	void Score(char *name);
+};
+
+class Game
+{
+public:
+	Game() { dir = STOP; nTail = 0; }
+
+	int tailX[100], tailY[100];
+	int nTail;
+	enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
+	eDirection dir;
+
+	void Setup(Snake &snake,int dif);
+	void Draw(Snake &snake);
+	void Input();
+	void Logic(Snake &snake);
+};
+
+int main() 
+{
+	Snake snake;
+	Game CSnake;
+	system("mode 100, 30");
+	cout << "                ..-@#######*....-####........+##-.    ....@###...     ..@##.... .:###...-###########"
+		<< "           ......=##=....-=@. ..:#####-......+##-.     ..=####%...     .@##.....@##*....-##=........"
+		<< "              ...##@... ....  ..:##*@##:.. ..+##-.    ..:##:*##+..     .@##...+##%......-##=.    ..."
+		<< "            .....@##%.......  ..:##*.%##*....+##-......-##+..%##-.......@##.-###-.     .-##=.    ..."
+		<< "            ......+####@:.... ..:##*..=##*...+##-......@#@....###.. ....@##%##*...    ..-#########%."
+		<< "            .... ....*#####*. ..:##*...+##=..+##-.. ..+##-....:##=......@##*##@...     .-##@******:."
+		<< "                      ...@##%...:##* ...*##=.+##-....:##%******@##*.. ..@##..@##*.......-##=.       "
+		<< "               .....  ....###...:##* ....:##%+##-....###%%%%%%%%###-....@##...*##@......-##=.       "
+		<< "             ...:+.......+##=...:##* . ...-#####-...%##-........:##@....@##.....###*....-##=.     .."
+		<< "             ...:##########:....:##*.......-####-..*##*.... .....+##+...@##. ....*###...-###########";
+             
+	char *buff= new char[255];
+	cout << "                                 ENTER YOUR NAME: ";
+	cin.getline(buff, 255);
+	char *name = new char[strlen(buff)];
+	strcpy(name, buff);
+	delete[] buff;
+
+	cout << "CHOOSE DIFFICULTY: " << endl;
+
+	int dif;
+
+	do {
+		cout << "1. HARD" << endl;
+		cout << "2. NORMAL" << endl;
+		cout << "3.NOOB" << endl;
+		cout << "Your choise:";
+
+		cin >> dif;
+
+		if(dif < 1 || dif > 3)
+			cout << "Wrong!" << endl;
+
+	} while (dif < 1 || dif > 3);
+
+	CSnake.Setup(snake, dif);
+	snake.Score(name);
+
+	system("pause");
+	return 0;
 }
-void Draw() 
+void Game::Setup(Snake &snake, int dif)
+{
+	snake.x = snake.width / 2;
+	snake.y = snake.height / 2;
+
+	while (!snake.gameOver)
+	{
+		switch (dif)
+		{
+		case 1:
+			Sleep(0);
+			break;
+		case 2:
+			Sleep(40);
+			break;
+		case 3:
+			Sleep(80);
+			break;
+		}
+
+		Draw(snake);
+		Input();
+		Logic(snake);
+	}
+}
+void Game::Draw(Snake &snake)
 {
 	system("cls");
-	for (int i = 0; i < width+2; i++)
+	for (int i = 0; i < snake.width + 2; i++)
 		cout << "#";
 	cout << endl;
 
-	for (int i = 0; i < height; i++)
+	for (int i = 0; i < snake.height; i++)
 	{
-		for (int j = 0; j < width; j++)
+		for (int j = 0; j < snake.width; j++)
 		{
 			if (j == 0)
 				cout << "#";
 
-			if (i == y && j == x)
+			if (i == snake.y && j == snake.x)
 				cout << "O";
 
-			else if (i == fruitY && j == fruitX)
+			else if (i == snake.fruitY && j == snake.fruitX)
 				cout << "*";
 			else
 			{
@@ -61,19 +139,19 @@ void Draw()
 					cout << " ";
 			}
 
-			if (j == width - 1)
+			if (j == snake.width - 1)
 				cout << "#";
 		}
 		cout << endl;
 	}
 
-	for (int i = 0; i < width+2; i++)
+	for (int i = 0; i < snake.width + 2; i++)
 		cout << "#";
 	cout << endl;
 	cout << "PAUSE: X" << endl;
-	cout << "Score:" << score << endl;
+	cout << "Score:" << snake.score << endl;
 }
-void Input() 
+void Game::Input()
 {
 	if (_kbhit())
 	{
@@ -97,165 +175,68 @@ void Input()
 		}
 	}
 }
-void Logic() 
+void Game::Logic(Snake &snake)
 {
-	int prevX = tailX[0];
-	int prevY = tailY[0];
-	int prev2X, prev2Y;
-	tailX[0] = x;
-	tailY[0] = y;
-
-	for (int i = 1; i < nTail; i++)
+	if (dir != STOP)
 	{
-		prev2X = tailX[i];
-		prev2Y = tailY[i];
-		tailX[i] = prevX;
-		tailY[i] = prevY;
-		prevX = prev2X;
-		prevY = prev2Y;
+		int prevX = tailX[0];
+		int prevY = tailY[0];
+		int prev2X, prev2Y;
+
+		tailX[0] = snake.x;
+		tailY[0] = snake.y;
+
+		for (int i = 1; i < nTail; i++)
+		{
+			prev2X = tailX[i];
+			prev2Y = tailY[i];
+			tailX[i] = prevX;
+			tailY[i] = prevY;
+			prevX = prev2X;
+			prevY = prev2Y;
+		}
 	}
 	switch (dir)
 	{
 	case LEFT:
-		x--;
+		snake.x--;
 		break;
 	case RIGHT:
-		x++;
+		snake.x++;
 		break;
 	case UP:
-		y--;
+		snake.y--;
 		break;
 	case DOWN:
-		y++;
-		break;
-	default:
-		break;
+		snake.y++;
 	}
-	if (x > width || x < 0 || y > height || y < 0)
+	if (snake.x > snake.width || snake.x < 0 || snake.y > snake.height || snake.y < 0)
 	{
 		system("cls");
-			cout << "    .###########+     .#######      +####-     :####* =###############*" << endl;
-			cout << "  .%=##%++++++++-   -@@##%+%##%%-   =####%%: *%@####* =####+++++++++++-" << endl;
-			cout << "-*%##@%:          :+%##@%: +%@##++- =######=+@######* =####.           " << endl;
-			cout << "*####-   -:::---- +####-     :####* =###############* =####:--------.  " << endl;
-			cout << "+####-   =######+ +####-.....:####* =###############* =#############.  " << endl;
-			cout << "+####-     :####+ +###############* =####- @#= :####* =####.           " << endl;
-			cout << " :####+   :####+ +####-     :####* +####-     :####* =####.           " << endl;
-			cout << "   .###########+ +####-     *####* +####.     :####* =###############*" << endl;
-			cout << endl; 
-			cout << "  :###########-   +####-     :####* =###############* =#############.  " << endl;
-			cout << "+####-     :####+ +####-     :####* =####.            =####.     :####*" << endl;
-			cout << "+####-     :####+ +####-     :####* +####.            =####.     :####*" << endl;
-			cout << "+####-     :####+ +####-     :####* +#############-   =####.   =######*" << endl;
-			cout << "+####-     :####+ ..:####+ =####:.. +####-.........   =###########....." << endl;
-			cout << "+####-     :####+   .**###@###**.   +####.            =####**#####@@.  " << endl;
-			cout << ":%%##=+++++=##%%:     .%%###%=      +####+++++++++++- +####. +%@####++-" << endl;
-			cout << " -###########-          %#=        +###############* +####.   *######:" << endl;
-		gameOver = true;
+		cout << "               GAME OVER        " << endl << endl;
+		cout << "               INSERT COIN    " << endl << endl;
+		snake.gameOver = true;
 	}
 	for (int i = 0; i < nTail; i++)
-		if (tailX[i] == x && tailY[i] == y)
+		if (tailX[i] == snake.x && tailY[i] == snake.y)
 		{
 			system("cls");
-			cout << "    .###########+     .#######      +####-     :####* =###############*";
-			cout << "  .%=##%++++++++-   -@@##%+%##%%-   =####%%: *%@####* =####+++++++++++-";
-			cout << "-*%##@%:          :+%##@%: +%@##++- =######=+@######* =####.           ";
-			cout << "*####-   -:::---- +####-     :####* =###############* =####:--------.  ";
-			cout << "+####-   =######+ +####-.....:####* =###############* =#############.  ";
-			cout << "+####-     :####+ +###############* =####- @#= :####* =####.           ";
-			cout << " :####+   :####+ +####-     :####* +####-     :####* =####.           ";
-			cout << "   .###########+ +####-     *####* +####.     :####* =###############*";
-			cout << endl;
-			cout << "  :###########-   +####-     :####* =###############* =#############.  ";
-			cout << "+####-     :####+ +####-     :####* =####.            =####.     :####*";
-			cout << "+####-     :####+ +####-     :####* +####.            =####.     :####*";
-			cout << "+####-     :####+ +####-     :####* +#############-   =####.   =######*";
-			cout << "+####-     :####+ ..:####+ =####:.. +####-.........   =###########.....";
-			cout << "+####-     :####+   .**###@###**.   +####.            =####**#####@@.  ";
-			cout << ":%%##=+++++=##%%:     .%%###%=      +####+++++++++++- +####. +%@####++-";
-			cout << " -###########-          %#=        +###############* +####.   *######:";
-			gameOver = true;
+			cout << "               GAME OVER        " << endl << endl;
+			cout << "               INSERT COIN    " << endl << endl;
+			snake.gameOver = true;
 		}
 
-	if (x == fruitX && y == fruitY)
+	if (snake.x == snake.fruitX && snake.y == snake.fruitY)
 	{
-		score += 1;
-		fruitX = rand() % width;
-		fruitY = rand() % height;
+		snake.score += 1;
+		snake.fruitX = rand() % snake.width;
+		snake.fruitY = rand() % snake.height;
 		nTail++;
 	}
 }
-
-void difficulty()
+void Snake::Score(char *name)
 {
-
-
-
-}
-
-int main() 
-{
-	system("mode 100, 30");
-	cout << "                ..-@#######*....-####........+##-.    ....@###...     ..@##.... .:###...-###########";
-	cout << "           ......=##=....-=@. ..:#####-......+##-.     ..=####%...     .@##.....@##*....-##=........";
-	cout << "              ...##@... ....  ..:##*@##:.. ..+##-.    ..:##:*##+..     .@##...+##%......-##=.    ...";
-	cout << "            .....@##%.......  ..:##*.%##*....+##-......-##+..%##-.......@##.-###-.     .-##=.    ...";
-	cout << "            ......+####@:.... ..:##*..=##*...+##-......@#@....###.. ....@##%##*...    ..-#########%.";
-	cout << "            .... ....*#####*. ..:##*...+##=..+##-.. ..+##-....:##=......@##*##@...     .-##@******:.";
-	cout << "                      ...@##%...:##* ...*##=.+##-....:##%******@##*.. ..@##..@##*.......-##=.       ";
-	cout << "               .....  ....###...:##* ....:##%+##-....###%%%%%%%%###-....@##...*##@......-##=.       ";
-	cout << "             ...:+.......+##=...:##* . ...-#####-...%##-........:##@....@##.....###*....-##=.     ..";
-	cout << "             ...:##########:....:##*.......-####-..*##*.... .....+##+...@##. ....*###...-###########";
-             
-	char *buff= new char[255];
-	cout << "                                 ENTER YOUR NAME: ";
-	cin.getline(buff, 255);
-	char *name = new char[strlen(buff)];
-	strcpy(name, buff);
-	delete[] buff;
-
-	cout << "CHOOSE DIFFICULTY: " << endl;
-
-	int dif = 0;
-
-	do {
-		cout << "1. HARD" << endl;
-		cout << "2. NORMAL" << endl;
-		cout << "3.NOOB" << endl;
-		cout << "Your choise:";
-
-		cin >> dif;
-
-		if(dif < 1 || dif > 3)
-			cout << "Wrong!" << endl;
-
-	} while (dif < 1 || dif > 3);
-
-	Setup();
-	while (!gameOver)
-	{
-		switch (dif)
-		{
-		case 1:
-			Sleep(0);
-			break;
-		case 2:
-			Sleep(40);
-			break;
-		case 3:
-
-			Sleep(80);
-			break;
-		}
-		
-		Draw();
-		Input();
-		Logic();
-	}
-
 	ofstream board("Score_Board.txt", ios::app);
-
 	board << name << ":" << score << endl;
 	board.close();
-	return 0;
 }
