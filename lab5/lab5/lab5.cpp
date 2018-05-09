@@ -13,6 +13,14 @@ public:
 	char *patronymic;
 	char *phone_number;
 	int date[3];
+
+	/*~Student()
+	{ 
+		delete[] surname;
+		delete[] name;
+		delete[] patronymic;
+		delete[] phone_number;
+	};*/
 };
 
 class List 
@@ -24,19 +32,26 @@ private:
 		ListElem *next;
 	};
 	ListElem *Begin = NULL;
-	void Show2(ListElem *x);
-	void Free2(ListElem *x);
-	void Menu(ListElem *x);
 public:
-	void Add(Student &a);
-	void Search(int option);
-	void Show();	
+	void Add(const Student &a);
+	friend Student Search(int option, char* search);
 	void Sort(int option);	
-	void Free();	
+	void Free();
+	void Delete(char* surname, char* name, char* patronymic);
 	bool Empty();
+	friend ostream& operator << (ostream &a, const List &b);
+	friend ostream& operator << (ostream &a,const List::ListElem *b);
+	friend istream& operator >>(istream &a, List::ListElem *b);
+	~List() { Free(); };
 };
 
-void List::Add(Student &a)
+char *Read();
+
+bool choise();
+
+void Emp(bool x);
+
+void List::Add(const Student &a)
 {
 	ListElem *Add = new ListElem;
 
@@ -53,9 +68,10 @@ void List::Add(Student &a)
 	Begin = Add;
 }
 
-void List::Search(int option)
+Student Search(int option, char* search)  /*, int& count*/
 {
-	ListElem *Search = Begin;
+	bool isError = false;
+	List::ListElem *Search = NULL;
 
 	bool z = false;
 
@@ -63,11 +79,7 @@ void List::Search(int option)
 	{
 		char *x;
 
-		char buf[255];
-		cout << "Enter:";
-		cin >> buf;
-		char *search = new char[strlen(buf)];
-		strcpy(search, buf);
+		//char *search = Read();
 
 		while (Search)
 		{
@@ -89,92 +101,21 @@ void List::Search(int option)
 				}
 				if (z == true)
 				{
-					Show2(Search);
-					Menu(Search);
-					break;
+					return Search->a;
 				}
 			}
 			Search = Search->next;
 		}
-		if (z == false)
-		{
-			cout << endl << "================================================================" << endl << endl;
-			cout << "Not found" << endl;
-			cout << endl << "================================================================" << endl << endl;
-		}
+		//count = 0;
+		//return Student[count];
 	}
 
 	if (option == 5)
 	{
-		int date2[3];
-
-		cout << "Enter day:";
-		cin >> date2[0];
-		cout << "Enter month:";
-		cin >> date2[1];
-		cout << "Enter year:";
-		cin >> date2[2];
-
-		while (Search)
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				if (date2[i] != Search->a.date[i])
-				{
-					z = true;
-					break;
-				}
-			}
-			if (z == false)
-			{
-				Show2(Search);
-				break;
-			}
-			Search = Search->next;
-		}
-		if (z == true)
-		{
-			cout << endl << "================================================================" << endl << endl;
-			cout << "Not found" << endl;
-			cout << endl << "================================================================" << endl << endl;
-		}
+		// из search вытаскиваем дату (как хотим, это строка просто)
+		/*count = 0;
+		return Student[0];*/
 	}
-}
-
-void List::Show()
-{
-	ListElem *Show = Begin;
-
-	while (Show != NULL)
-	{
-		cout << "================================================================" << endl << endl;
-		cout << "Name: " << Show->a.name << endl;
-		cout << "Surname: " << Show->a.surname << endl;
-		cout << "Patronymic: " << Show->a.patronymic << endl;
-		cout << "Phone number: " << Show->a.phone_number << endl;
-		cout << "Date" << endl;
-		cout << "Day: " << Show->a.date[0] << endl;
-		cout << "Month: " << Show->a.date[1] << endl;
-		cout << "Year: " << Show->a.date[2] << endl;
-		cout << "================================================================" << endl << endl;
-		Show = Show->next;
-	}
-}
-
-void List::Show2(ListElem *x)
-{
-	ListElem *Show = x;
-	cout << endl << "================================================================" << endl << endl;
-	cout << "Name: " << Show->a.name << endl;
-	cout << "Surname: " << Show->a.surname << endl;
-	cout << "Patronymic: " << Show->a.patronymic << endl;
-	cout << "Phone number: " << Show->a.phone_number << endl;
-	cout << "Date" << endl;
-	cout << "Day: " << Show->a.date[0] << endl;
-	cout << "Month: " << Show->a.date[1] << endl;
-	cout << "Year: " << Show->a.date[2] << endl;
-	cout << endl << "================================================================" << endl << endl;
-
 }
 
 void List::Sort(int option) 
@@ -195,7 +136,6 @@ void List::Sort(int option)
 			if (option == 2) y = New->a.date[1];
 			if (option == 3) y = New->a.date[2];
 		}
-
 
 		Begin = Begin->next;
 		if (New == NULL || x < y)
@@ -225,39 +165,6 @@ void List::Sort(int option)
 	Begin = New;
 }
 
-void List::Menu(ListElem *x)
-{
-	int option;
-	do {
-		cout << "1.Delete" << endl
-			<< "2.Continue" << endl
-			<< "Your choice :";
-
-		while (!(cin >> option))
-		{
-			cout << "Error. Enter the correct choice" << endl << "Your choice: ";
-			cin.clear();
-			while (cin.get() != '\n');
-		}
-
-		if (option <1 || option >2) cout << "Error. Enter the correct choice" << endl;
-	} while (option < 1 || option>2);
-
-	cout << "================================================================" << endl << endl;
-
-	do
-	{
-		switch (option)
-		{
-		case 1:
-			Free2(x);
-			return;
-		case 2:
-			return;
-		}
-	} while (option != 2);
-}
-
 void List::Free() 
 {
 	while (Begin != NULL)
@@ -268,28 +175,77 @@ void List::Free()
 	}
 }
 
-void List::Free2(ListElem *x)
+void List::Delete(char* name, char* surname, char* patronymic)
 {
-	ListElem *Free2 = Begin;
+	bool z = false;
 
-	if (x == Free2)
-	{
-		Begin = Free2->next;
-		delete Free2;
-		return;
-	}
-	ListElem *Free3 = Free2->next;
+	ListElem *Search = Begin;
 
-	while (Free3)
+	while (Search)
 	{
-		if (Free3 == x)
+		if (strlen(name) == strlen(Search->a.name) && strlen(surname) == strlen(Search->a.surname) && strlen(patronymic) == strlen(Search->a.patronymic))
 		{
-			Free2->next = Free3->next;
-			delete Free3;
-			return;
+			for (int i = 0; i < strlen(Search->a.name); i++)
+			{
+				if (name[i] != Search->a.name[i])
+				{
+					z = true;
+					break;
+				}
+			}
+
+			for (int i = 0; i < strlen(Search->a.surname); i++)
+			{
+				if (surname[i] != Search->a.surname[i])
+				{
+					z = true;
+					break;
+				}
+			}
+
+			for (int i = 0; i < strlen(Search->a.patronymic); i++)
+			{
+				if (patronymic[i] != Search->a.patronymic[i])
+				{
+					z = true;
+					break;
+				}
+			}
+
+			if (z == false)
+			{
+				if (choise() == true)
+				{
+					if (Search == Begin)
+					{
+						Begin = Search->next;
+						delete Search;
+						return;
+					}
+					else
+					{
+						ListElem *Free2 = Begin;
+						ListElem *Free3 = Free2->next;
+
+						while (Free3)
+						{
+							if (Free3 == Search)
+							{
+								Free2->next = Free3->next;
+								delete Free3;
+								return;
+							}
+							Free2 = Free3;
+							Free3 = Free3->next;
+						}
+					}
+				}
+			}
 		}
-		Free2 = Free3;
-		Free3 = Free3->next;
+
+		bool z = false;
+
+		Search = Search->next;
 	}
 }
 
@@ -297,14 +253,91 @@ bool List::Empty()
 {
 	if (Begin == NULL)
 	{
-		cout << "================================================================" << endl << endl;
-		cout << " EMPTY" << endl;
-		cout << "================================================================" << endl << endl;
 		return true;
 	}
 }
 
-char* Read();
+ostream& operator << (ostream &a,const List &b)
+{
+	List::ListElem *Show = b.Begin;
+
+	if (b.Begin == NULL)
+	{
+		a << "================================================================" << endl << endl;
+		cout << " EMPTY" << endl;
+		cout << "================================================================" << endl << endl;
+	}
+	else
+	{
+		while (Show != NULL)
+	
+		{
+			cout << "================================================================" << endl << endl;
+			cout << "Name: " << Show->a.name << endl;
+			cout << "Surname: " << Show->a.surname << endl;
+			cout << "Patronymic: " << Show->a.patronymic << endl;
+			cout << "Phone number: " << Show->a.phone_number << endl;
+			cout << "Date" << endl;
+			cout << "Day: " << Show->a.date[0] << endl;
+			cout << "Month: " << Show->a.date[1] << endl;
+			cout << "Year: " << Show->a.date[2] << endl;
+			cout << "================================================================" << endl << endl;
+			Show = Show->next;
+		}
+	}
+	
+	return a;
+}
+
+ostream& operator << (ostream &a,const List::ListElem *b)
+{
+	cout << endl << "================================================================" << endl << endl;
+	cout << "Name: " << b->a.name << endl;
+	cout << "Surname: " << b->a.surname << endl;
+	cout << "Patronymic: " << b->a.patronymic << endl;
+	cout << "Phone number: " << b->a.phone_number << endl;
+	cout << "Date" << endl;
+	cout << "Day: " << b->a.date[0] << endl;
+	cout << "Month: " << b->a.date[1] << endl;
+	cout << "Year: " << b->a.date[2] << endl;
+	cout << endl << "================================================================" << endl << endl;
+	return a;
+}
+
+istream& operator >>(istream &a, List::ListElem *b)
+{
+	int date2[3];
+
+	cout << "Enter day:";
+	a >> date2[0];
+	cout << "Enter month:";
+	a >> date2[1];
+	cout << "Enter year:";
+	a >> date2[2];
+
+	List::ListElem *Search = b;
+	bool z = false;
+
+	while (Search)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (date2[i] != Search->a.date[i])
+			{
+				z = true;
+				break;
+			}
+		}
+		if (z == false)
+		{
+			cout << Search;
+		}
+		Search = Search->next;
+	}
+	return a;
+}
+
+void Del(List &clas);
 
 void Menu();
 
@@ -318,7 +351,7 @@ char *Read();
 
 void Check(int &x, string &y);
 
-bool Num(const char *buf);
+bool Num(char *buf);
 
 void Insert(List &clas, Student &a);
 
@@ -333,6 +366,70 @@ int main()
 
 	system("pause");
 	return 0;
+}
+
+bool choise()
+{
+	int option;
+
+	do {
+		cout << "1.Delete" << endl
+			<< "2.Continue" << endl
+			<< "Your choice :";
+
+		while (!(cin >> option))
+		{
+			cout << "Error. Enter the correct choice" << endl << "Your choice: ";
+			cin.clear();
+			while (cin.get() != '\n');
+		}
+
+		if (option < 1 || option >2) cout << "Error. Enter the correct choice" << endl;
+	} while (option < 1 || option > 2);
+
+	cout << "================================================================" << endl << endl;
+
+	do
+	{
+		switch (option)
+		{
+		case 1:
+			return true;
+		case 2:
+			return false;
+		}
+	} while (option < 1 || option >2);
+}
+
+void Emp(bool x)
+{
+	if (x == false)
+	{
+		cout << endl << "================================================================" << endl << endl;
+		cout << "Not found" << endl;
+		cout << endl << "================================================================" << endl << endl;
+	}
+}
+
+void Del(List &clas)
+{
+	char buf[255];
+	cout << "Name: ";
+	cin >> buf;
+	char *del = new char[strlen(buf)];
+	strcpy(del, buf);
+
+	cout << "Surname: ";
+	cin >> buf;
+	char *del1 = new char[strlen(buf)];
+	strcpy(del1, buf);
+
+	cout << "Patronymic: ";
+	cin >> buf;
+	char *del2 = new char[strlen(buf)];
+	strcpy(del2, buf);
+
+	clas.Delete(del, del1, del2);
 }
 
 void Menu()
@@ -377,10 +474,11 @@ void Menu2(List &clas, Student &a)
 	do
 	{
 		cout << "1.Continue" << endl
-			 << "2.Show all" << endl
-			 << "3.Sort" << endl
-			 << "4.Search" << endl
-			 << "5.Exit" << endl;
+			<< "2.Show all" << endl
+			<< "3.Sort" << endl
+			<< "4.Search" << endl
+			<< "5.Delete elem" << endl
+			<< "6.Exit" << endl;
 
 		while (!(cin >> option))
 		{
@@ -389,8 +487,8 @@ void Menu2(List &clas, Student &a)
 			while (cin.get() != '\n');
 		}
 
-		if (option < 1 || option > 5) cout << "Error. Enter the correct choice" << endl;
-	} while (option < 1 || option > 5);
+		if (option < 1 || option > 6) cout << "Error. Enter the correct choice" << endl;
+	} while (option < 1 || option > 6);
 
 	cout << "================================================================" << endl << endl;
 
@@ -404,16 +502,18 @@ void Menu2(List &clas, Student &a)
 			break;
 		case 2:
 			if(clas.Empty() == true)
-			{			
+			{	
+				cout << clas;
 				Menu2(clas, a);
 				break;
 			}
-			clas.Show();
+			cout << clas;
 			Menu2(clas,a);
 			break;
 		case 3:
 			if (clas.Empty() == true)
 			{
+				cout << clas;
 				Menu2(clas, a);
 				break;
 			}
@@ -423,6 +523,7 @@ void Menu2(List &clas, Student &a)
 		case  4:
 			if (clas.Empty() == true)
 			{
+				cout << clas;
 				Menu2(clas, a);
 				break;
 			}
@@ -430,6 +531,15 @@ void Menu2(List &clas, Student &a)
 			Menu2(clas, a);
 			break;
 		case 5:
+			if (clas.Empty() == true)
+			{
+				cout << clas;
+				Menu2(clas, a);
+				break;
+			}
+			Del(clas);
+			Menu2(clas, a);
+		case 6:
 			cout << "Bye! ";
 			clas.Free();
 			system("pause");
@@ -463,28 +573,29 @@ void Menu3(List &clas, Student &a)
 
 	cout << "================================================================" << endl << endl;
 
+	char *search = Read();
 	do
 	{
 		switch (option)
 		{
 		case 1:
-			clas.Search(option);
+			Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 2:
-			clas.Search(option);
+			Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 3:
-			clas.Search(option);
+			Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 4:
-			clas.Search(option);
+			Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 5:
-			clas.Search(option);
+			Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 6:
@@ -501,10 +612,10 @@ void Menu4(List &clas, Student &a)
 
 	do {
 		cout << "1.Sort by day" << endl
-			 << "2.Sort by month" << endl
-			 << "3.Sort by year" << endl
-			 << "4.Exit" << endl
-			 << "Your choice :";
+			<< "2.Sort by month" << endl
+			<< "3.Sort by year" << endl
+			<< "4.Exit" << endl
+			<< "Your choice :";
 		 
 		while (!(cin >> option))
 		{
@@ -557,13 +668,13 @@ void Check(int &x, string &y)
 	while (!(cin >> x))
 	{
 		cout << "[Error] Only numbers" << endl;
-		cout << "Day: ";
+		cout << y;
 		cin.clear();
 		while (cin.get() != '\n');
 	}
 }
 
-bool Num(const char *buf)
+bool Num(char *buf)
 {
 	const char *temp = "0123456789";
 
@@ -617,3 +728,97 @@ void Insert(List &clas, Student &a)
 
 	cout << endl << "================================================================" << endl << endl;
 }
+
+//void List::Free2(ListElem *x)
+//{
+//	ListElem *Free2 = Begin;
+//
+//	if (x == Free2)
+//	{
+//		Begin = Free2->next;
+//		delete Free2;
+//		return;
+//	}
+//	ListElem *Free3 = Free2->next;
+//
+//	while (Free3)
+//	{
+//		if (Free3 == x)
+//		{
+//			Free2->next = Free3->next;
+//			delete Free3;
+//			return;
+//		}
+//		Free2 = Free3;
+//		Free3 = Free3->next;
+//	}
+//}
+
+//void Menu5(List &clas)
+//{
+//	int option;
+//	do {
+//		cout << "1.Delete" << endl
+//			<< "2.Continue" << endl
+//			<< "Your choice :";
+//
+//		while (!(cin >> option))
+//		{
+//			cout << "Error. Enter the correct choice" << endl << "Your choice: ";
+//			cin.clear();
+//			while (cin.get() != '\n');
+//		}
+//
+//		if (option <1 || option >2) cout << "Error. Enter the correct choice" << endl;
+//	} while (option < 1 || option>2);
+//
+//	cout << "================================================================" << endl << endl;
+//
+//	do
+//	{
+//		switch (option)
+//		{
+//		case 1:
+//			Del(clas);
+//			return;
+//		case 2:
+//			return;
+//		}
+//	} while (option != 2);
+//}
+
+//void List::Show2(ListElem *x)
+//{
+//	ListElem *Show = x;
+//	cout << endl << "================================================================" << endl << endl;
+//	cout << "Name: " << Show->a.name << endl;
+//	cout << "Surname: " << Show->a.surname << endl;
+//	cout << "Patronymic: " << Show->a.patronymic << endl;
+//	cout << "Phone number: " << Show->a.phone_number << endl;
+//	cout << "Date" << endl;
+//	cout << "Day: " << Show->a.date[0] << endl;
+//	cout << "Month: " << Show->a.date[1] << endl;
+//	cout << "Year: " << Show->a.date[2] << endl;
+//	cout << endl << "================================================================" << endl << endl;
+//
+//}
+
+//void List::Show()
+//{
+//	ListElem *Show = Begin;
+//
+//	while (Show != NULL)
+//	{
+//		cout << "================================================================" << endl << endl;
+//		cout << "Name: " << Show->a.name << endl;
+//		cout << "Surname: " << Show->a.surname << endl;
+//		cout << "Patronymic: " << Show->a.patronymic << endl;
+//		cout << "Phone number: " << Show->a.phone_number << endl;
+//		cout << "Date" << endl;
+//		cout << "Day: " << Show->a.date[0] << endl;
+//		cout << "Month: " << Show->a.date[1] << endl;
+//		cout << "Year: " << Show->a.date[2] << endl;
+//		cout << "================================================================" << endl << endl;
+//		Show = Show->next;
+//	}
+//}
