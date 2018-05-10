@@ -34,13 +34,13 @@ private:
 	ListElem *Begin = NULL;
 public:
 	void Add(const Student &a);
-	friend Student Search(int option, char* search);
+	Student Search(int option, char* search);
 	void Sort(int option);	
 	void Free();
 	void Delete(char* surname, char* name, char* patronymic);
 	bool Empty();
 	friend ostream& operator << (ostream &a, const List &b);
-	friend ostream& operator << (ostream &a,const List::ListElem *b);
+	friend ostream& operator << (ostream &a, const Student &b);
 	friend istream& operator >>(istream &a, List::ListElem *b);
 	~List() { Free(); };
 };
@@ -68,18 +68,16 @@ void List::Add(const Student &a)
 	Begin = Add;
 }
 
-Student Search(int option, char* search)  /*, int& count*/
+Student List::Search(int option, char* search)  /*, int& count*/
 {
 	bool isError = false;
-	List::ListElem *Search = NULL;
+	List::ListElem *Search = Begin;
 
 	bool z = false;
 
 	if (option >= 1 && option != 5)
 	{
 		char *x;
-
-		//char *search = Read();
 
 		while (Search)
 		{
@@ -101,6 +99,7 @@ Student Search(int option, char* search)  /*, int& count*/
 				}
 				if (z == true)
 				{
+					cout << "+";
 					return Search->a;
 				}
 			}
@@ -264,24 +263,24 @@ ostream& operator << (ostream &a,const List &b)
 	if (b.Begin == NULL)
 	{
 		a << "================================================================" << endl << endl;
-		cout << " EMPTY" << endl;
-		cout << "================================================================" << endl << endl;
+		a << " EMPTY" << endl;
+		a << "================================================================" << endl << endl;
 	}
 	else
 	{
 		while (Show != NULL)
 	
 		{
-			cout << "================================================================" << endl << endl;
-			cout << "Name: " << Show->a.name << endl;
-			cout << "Surname: " << Show->a.surname << endl;
-			cout << "Patronymic: " << Show->a.patronymic << endl;
-			cout << "Phone number: " << Show->a.phone_number << endl;
-			cout << "Date" << endl;
-			cout << "Day: " << Show->a.date[0] << endl;
-			cout << "Month: " << Show->a.date[1] << endl;
-			cout << "Year: " << Show->a.date[2] << endl;
-			cout << "================================================================" << endl << endl;
+			a << "================================================================" << endl << endl;
+			a << "Name: " << Show->a.name << endl;
+			a << "Surname: " << Show->a.surname << endl;
+			a << "Patronymic: " << Show->a.patronymic << endl;
+			a << "Phone number: " << Show->a.phone_number << endl;
+			a << "Date" << endl;
+			a << "Day: " << Show->a.date[0] << endl;
+			a << "Month: " << Show->a.date[1] << endl;
+			a << "Year: " << Show->a.date[2] << endl;
+			a << "================================================================" << endl << endl;
 			Show = Show->next;
 		}
 	}
@@ -289,18 +288,18 @@ ostream& operator << (ostream &a,const List &b)
 	return a;
 }
 
-ostream& operator << (ostream &a,const List::ListElem *b)
+ostream& operator << (ostream &a, const Student &b)
 {
-	cout << endl << "================================================================" << endl << endl;
-	cout << "Name: " << b->a.name << endl;
-	cout << "Surname: " << b->a.surname << endl;
-	cout << "Patronymic: " << b->a.patronymic << endl;
-	cout << "Phone number: " << b->a.phone_number << endl;
-	cout << "Date" << endl;
-	cout << "Day: " << b->a.date[0] << endl;
-	cout << "Month: " << b->a.date[1] << endl;
-	cout << "Year: " << b->a.date[2] << endl;
-	cout << endl << "================================================================" << endl << endl;
+	a << endl << "================================================================" << endl << endl;
+	a << "Name: " << b.name << endl;
+	a << "Surname: " << b.surname << endl;
+	a << "Patronymic: " << b.patronymic << endl;
+	a << "Phone number: " << b.phone_number << endl;
+	a << "Date" << endl;
+	a << "Day: " << b.date[0] << endl;
+	a << "Month: " << b.date[1] << endl;
+	a << "Year: " << b.date[2] << endl;
+	a << endl << "================================================================" << endl << endl;
 	return a;
 }
 
@@ -574,28 +573,29 @@ void Menu3(List &clas, Student &a)
 	cout << "================================================================" << endl << endl;
 
 	char *search = Read();
+	
 	do
 	{
 		switch (option)
 		{
 		case 1:
-			Search(option, search);
+			cout << clas.Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 2:
-			Search(option, search);
+			clas.Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 3:
-			Search(option, search);
+			clas.Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 4:
-			Search(option, search);
+			clas.Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 5:
-			Search(option, search);
+			clas.Search(option, search);
 			Menu2(clas, a);
 			break;
 		case 6:
