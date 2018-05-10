@@ -34,13 +34,13 @@ private:
 	ListElem *Begin = NULL;
 public:
 	void Add(const Student &a);
-	Student Search(int option, char* search);
+	Student Search(int option, char* search, int& count);
 	void Sort(int option);	
 	void Free();
 	void Delete(char* surname, char* name, char* patronymic);
 	bool Empty();
 	friend ostream& operator << (ostream &a, const List &b);
-	friend ostream& operator << (ostream &a, const Student &b);
+	friend ostream& operator << (ostream &a,const Student &b);
 	friend istream& operator >>(istream &a, List::ListElem *b);
 	~List() { Free(); };
 };
@@ -68,11 +68,11 @@ void List::Add(const Student &a)
 	Begin = Add;
 }
 
-Student List::Search(int option, char* search)  /*, int& count*/
+Student List::Search(int option, char* search, int& count)
 {
-	bool isError = false;
 	List::ListElem *Search = Begin;
 
+	Student *y = new Student[10];
 	bool z = false;
 
 	if (option >= 1 && option != 5)
@@ -99,14 +99,14 @@ Student List::Search(int option, char* search)  /*, int& count*/
 				}
 				if (z == true)
 				{
-					cout << "+";
-					return Search->a;
+					y[count] = Search->a;
+					count++;
 				}
 			}
 			Search = Search->next;
 		}
-		//count = 0;
-		//return Student[count];
+
+		return *y;
 	}
 
 	if (option == 5)
@@ -288,7 +288,7 @@ ostream& operator << (ostream &a,const List &b)
 	return a;
 }
 
-ostream& operator << (ostream &a, const Student &b)
+ostream& operator << (ostream &a,const Student &b)
 {
 	a << endl << "================================================================" << endl << endl;
 	a << "Name: " << b.name << endl;
@@ -573,29 +573,32 @@ void Menu3(List &clas, Student &a)
 	cout << "================================================================" << endl << endl;
 
 	char *search = Read();
-	
+	Student *z = new Student[10];
+	int count = 0;
 	do
 	{
 		switch (option)
 		{
 		case 1:
-			cout << clas.Search(option, search);
+			*z = clas.Search(option, search, count);
+			for (int i = 0; i < count; i++)
+				cout << z[i];
 			Menu2(clas, a);
 			break;
 		case 2:
-			clas.Search(option, search);
+			cout << clas.Search(option, search, count);
 			Menu2(clas, a);
 			break;
 		case 3:
-			clas.Search(option, search);
+			cout << clas.Search(option, search, count);
 			Menu2(clas, a);
 			break;
 		case 4:
-			clas.Search(option, search);
+			cout << clas.Search(option, search, count);
 			Menu2(clas, a);
 			break;
 		case 5:
-			clas.Search(option, search);
+			cout << clas.Search(option, search, count);
 			Menu2(clas, a);
 			break;
 		case 6:
