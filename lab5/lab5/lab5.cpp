@@ -13,7 +13,7 @@ public:
 	char *patronymic;
 	char *phone_number;
 	int date[3];
-
+	int count;
 	/*~Student()
 	{ 
 		delete[] surname;
@@ -34,14 +34,16 @@ private:
 	ListElem *Begin = NULL;
 public:
 	void Add(const Student &a);
-	Student Search(int option, char* search, int& count);
+	void Add2(const Student &a);
+	Student** Search(int option, char *search, int &count, int &score);
+	Student** Search2(int option, int *date, int &count, int &score);
+	Student** Delete(char *surname, char *name, char *patronymic, int &count, int &score);
+	void Delete2(Student **result, int i);
 	void Sort(int option);	
 	void Free();
-	void Delete(char* surname, char* name, char* patronymic);
 	bool Empty();
 	friend ostream& operator << (ostream &a, const List &b);
 	friend ostream& operator << (ostream &a,const Student &b);
-	friend istream& operator >>(istream &a, List::ListElem *b);
 	~List() { Free(); };
 };
 
@@ -53,9 +55,23 @@ void Emp(bool x);
 
 void List::Add(const Student &a)
 {
-	ListElem *Add = new ListElem;
+	Begin = new ListElem;
 
-	Add->next = Begin;
+	Begin->a.name = a.name;
+	Begin->a.surname = a.surname;
+	Begin->a.patronymic = a.patronymic;
+	Begin->a.phone_number = a.phone_number;
+	Begin->a.date[0] = a.date[0];
+	Begin->a.date[1] = a.date[1];
+	Begin->a.date[2] = a.date[2];
+	Begin->a.count = a.count;
+
+	Begin->next = NULL;
+}
+
+void List::Add2(const Student &a)
+{
+	ListElem *Add = new ListElem;
 
 	Add->a.name = a.name;
 	Add->a.surname = a.surname;
@@ -64,57 +80,162 @@ void List::Add(const Student &a)
 	Add->a.date[0] = a.date[0];
 	Add->a.date[1] = a.date[1];
 	Add->a.date[2] = a.date[2];
+	Add->a.count = a.count;
 
-	Begin = Add;
+	ListElem *p = Begin;
+	ListElem *p1 = p->next;
+
+	while (p1)
+	{
+		p = p1;
+		p1 = p1->next;
+	}
+	p->next = Add;
+	Add->next = NULL;
 }
 
-Student List::Search(int option, char* search, int& count)
+Student** List::Search(int option, char *search, int &count, int &score)
 {
-	List::ListElem *Search = Begin;
+	ListElem *Search = Begin;
+	Student** y = new Student*[score];
+	bool z = false;
+	char *x;
 
-	Student *y = new Student[10];
+	while (Search)
+	{
+		if (option == 1) x = Search->a.name;
+		if (option == 2) x = Search->a.surname;
+		if (option == 3) x = Search->a.patronymic;
+		if (option == 4) x = Search->a.phone_number;
+
+		// strcmp
+
+		/*if (strcmp(x, search))
+		{
+			cout << "+" << endl;
+			*y[count] = Search->a;
+			cout << *y[count] << endl;
+			count++;
+		}
+*/
+
+		if (strlen(x) == strlen(search))
+		{
+			for (int i = 0; i < strlen(search); i++)
+			{
+				if (x[i] != search[i])
+				{
+					z = false;
+					break;
+				}
+				else z = true;
+			}
+			if (z == true)
+			{
+				y[count] = &Search->a;
+				count++;
+			}
+		}
+		Search = Search->next;
+	}
+	if (count == 0)
+	{
+		y = NULL;
+		return y;
+	}
+	else
+		return y;
+
+}
+
+Student** List::Search2(int option, int *date, int& count, int &score)
+{
+	ListElem *Search = Begin;
+	Student** y = new Student*[score];
 	bool z = false;
 
-	if (option >= 1 && option != 5)
+	while (Search)
 	{
-		char *x;
-
-		while (Search)
+		for (int i = 0; i < 3; i++)
 		{
-			if (option == 1) x = Search->a.name;
-			if (option == 2) x = Search->a.surname;
-			if (option == 3) x = Search->a.patronymic;
-			if (option == 4) x = Search->a.phone_number;
-
-			if (strlen(x) == strlen(search))
+			if (date[i] != Search->a.date[i])
 			{
-				for (int i = 0; i < strlen(search); i++)
+				z = false;
+				break;
+			}
+			else z = true;
+		}
+		if (z == true)
+		{
+			y[count] = &Search->a;
+			count++;
+		}
+		Search = Search->next;
+	}
+	if (count == 0)
+	{
+		y = NULL;
+		return y;
+	}
+	else
+		return y;
+}
+
+Student** List::Delete(char *name, char *surname, char *patronymic, int &count, int &score)
+{
+	bool z = false;
+	Student** y = new Student*[score];
+	ListElem *Search = Begin;
+
+	while (Search)
+	{
+		if (strlen(name) == strlen(Search->a.name) && strlen(surname) == strlen(Search->a.surname) && strlen(patronymic) == strlen(Search->a.patronymic))
+		{
+			for (int i = 0; i < strlen(Search->a.name); i++)
+			{
+				if (name[i] != Search->a.name[i])
 				{
-					if (x[i] != search[i])
-					{
-						z = false;
-						break;
-					}
-					else z = true;
-				}
-				if (z == true)
-				{
-					y[count] = Search->a;
-					count++;
+					z = true;
+					break;
 				}
 			}
-			Search = Search->next;
+
+			for (int i = 0; i < strlen(Search->a.surname); i++)
+			{
+				if (surname[i] != Search->a.surname[i])
+				{
+					z = true;
+					break;
+				}
+			}
+
+			for (int i = 0; i < strlen(Search->a.patronymic); i++)
+			{
+				if (patronymic[i] != Search->a.patronymic[i])
+				{
+					z = true;
+					break;
+				}
+			}
+			if (z == false)
+			{
+				y[count] = &Search->a;
+				count++;
+			}
 		}
 
-		return *y;
+		bool z = false;
+
+		Search = Search->next;
 	}
 
-	if (option == 5)
+	if (count == 0)
 	{
-		// из search вытаскиваем дату (как хотим, это строка просто)
-		/*count = 0;
-		return Student[0];*/
+		y = NULL;
+		return y;
 	}
+	else
+		return y;
 }
 
 void List::Sort(int option) 
@@ -174,78 +295,54 @@ void List::Free()
 	}
 }
 
-void List::Delete(char* name, char* surname, char* patronymic)
+void List::Delete2(Student **result, int i)
 {
-	bool z = false;
-
 	ListElem *Search = Begin;
-
-	while (Search)
+	ListElem *Search2;
+	for (int j = 0; j <= result[i]->count; j++)
 	{
-		if (strlen(name) == strlen(Search->a.name) && strlen(surname) == strlen(Search->a.surname) && strlen(patronymic) == strlen(Search->a.patronymic))
+		if (j == result[i]->count)
 		{
-			for (int i = 0; i < strlen(Search->a.name); i++)
+			if (Search == Begin)
 			{
-				if (name[i] != Search->a.name[i])
-				{
-					z = true;
-					break;
-				}
+				Begin = Search->next;
+				Search2 = Begin;
+				delete Search;
+				break;
 			}
-
-			for (int i = 0; i < strlen(Search->a.surname); i++)
+			else
 			{
-				if (surname[i] != Search->a.surname[i])
-				{
-					z = true;
-					break;
-				}
-			}
+				ListElem *Free2 = Begin;
+				ListElem *Free3 = Free2->next;
 
-			for (int i = 0; i < strlen(Search->a.patronymic); i++)
-			{
-				if (patronymic[i] != Search->a.patronymic[i])
+				while (Free3)
 				{
-					z = true;
-					break;
-				}
-			}
-
-			if (z == false)
-			{
-				if (choise() == true)
-				{
-					if (Search == Begin)
+					if (Free3 == Search)
 					{
-						Begin = Search->next;
-						delete Search;
-						return;
+						Free2->next = Free3->next;
+						Search2 = Free2->next;
+						delete Free3;
+						break;
 					}
-					else
-					{
-						ListElem *Free2 = Begin;
-						ListElem *Free3 = Free2->next;
-
-						while (Free3)
-						{
-							if (Free3 == Search)
-							{
-								Free2->next = Free3->next;
-								delete Free3;
-								return;
-							}
-							Free2 = Free3;
-							Free3 = Free3->next;
-						}
-					}
+					Free2 = Free3;
+					Free3 = Free3->next;
 				}
 			}
+
 		}
-
-		bool z = false;
-
 		Search = Search->next;
 	}
+
+	if (Search2 != NULL)
+	{
+		do
+		{
+			Search2->a.count--;
+			Search2 = Search2->next;
+		}while (Search2);
+	}
+	return;
+
 }
 
 bool List::Empty()
@@ -280,6 +377,7 @@ ostream& operator << (ostream &a,const List &b)
 			a << "Day: " << Show->a.date[0] << endl;
 			a << "Month: " << Show->a.date[1] << endl;
 			a << "Year: " << Show->a.date[2] << endl;
+			a << "count: " << Show->a.count << endl;
 			a << "================================================================" << endl << endl;
 			Show = Show->next;
 		}
@@ -299,72 +397,95 @@ ostream& operator << (ostream &a,const Student &b)
 	a << "Day: " << b.date[0] << endl;
 	a << "Month: " << b.date[1] << endl;
 	a << "Year: " << b.date[2] << endl;
+	a << "count: " << b.count << endl;
 	a << endl << "================================================================" << endl << endl;
 	return a;
 }
 
-istream& operator >>(istream &a, List::ListElem *b)
-{
-	int date2[3];
-
-	cout << "Enter day:";
-	a >> date2[0];
-	cout << "Enter month:";
-	a >> date2[1];
-	cout << "Enter year:";
-	a >> date2[2];
-
-	List::ListElem *Search = b;
-	bool z = false;
-
-	while (Search)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			if (date2[i] != Search->a.date[i])
-			{
-				z = true;
-				break;
-			}
-		}
-		if (z == false)
-		{
-			cout << Search;
-		}
-		Search = Search->next;
-	}
-	return a;
-}
-
-void Del(List &clas);
-
+void Del(List &clas, Student &a, int &score);
+void NotF();
+void Case1(List &clas, int option, int &score);
+void Case2(List &clas, int option, int &score);
 void Menu();
-
-void Menu2(List &clas, Student &a);
-
-void Menu3(List &clas, Student &a);
-
-void Menu4(List &clas, Student &a);
-
-char *Read();
-
+void Menu2(List &clas, Student &a, int &score);
+void Menu3(List &clas, Student &a, int &score);
+void Menu4(List &clas, Student &a, int &score);
+void Menu5(List &clas, Student &a, Student **result, int &score, int i);
 void Check(int &x, string &y);
-
 bool Num(char *buf);
+Student Insert(Student &a, int &score);
 
-void Insert(List &clas, Student &a);
 
 int main()
 {
+	int score = 0;
+
 	List clas;
 	Student a;
-
+	Student b;
 	Menu();
-	Insert(clas, a);
-	Menu2(clas,a);
+
+	b= Insert(a, score);
+	clas.Add(b);
+	Menu2(clas,a, score);
 
 	system("pause");
 	return 0;
+}
+
+
+void NotF()
+{
+	cout << "================================================================" << endl << endl;
+	cout << " NOT FOUND" << endl;
+	cout << "================================================================" << endl << endl;
+}
+
+int *Date()
+{
+	int *date= new int[3];
+
+	cout << "Enter day:";
+	cin >> date[0];
+	cout << "Enter month:";
+	cin >> date[1];
+	cout << "Enter year:";
+	cin >> date[2];
+
+	return date;
+}
+
+void Case1(List &clas, int option, int &score) 
+{
+	Student **result;
+	int count = 0;
+
+	char *search = Read();
+
+	result = clas.Search(option, search, count, score);
+	if (result != NULL)
+		for (int i = 0; i < count; i++)
+			cout << *(result[i]);
+	else
+		NotF();
+}
+
+void Case2(List &clas, int option, int &score)
+{
+	Student **result;
+	int count = 0;
+
+	int *date = Date();
+
+	for (int i = 0; i < 3; i++)
+		cout << date[i] << endl;
+
+	result = clas.Search2(option, date, count, score);
+	if (result != NULL)
+		for (int i = 0; i < count; i++)
+			cout << *(result[i]);
+	else
+		NotF();
 }
 
 bool choise()
@@ -410,8 +531,10 @@ void Emp(bool x)
 	}
 }
 
-void Del(List &clas)
+void Del(List &clas,Student &a , int &score)
 {
+	int count = 0;
+
 	char buf[255];
 	cout << "Name: ";
 	cin >> buf;
@@ -428,7 +551,22 @@ void Del(List &clas)
 	char *del2 = new char[strlen(buf)];
 	strcpy(del2, buf);
 
-	clas.Delete(del, del1, del2);
+	Student **result;
+
+	result = clas.Delete(del, del1, del2, count, score);
+
+	int i = 0;
+
+	if (result != NULL)
+	{
+		for (; i < count; i++)
+		{
+			cout << endl << i+1 << ":" << *result[i];
+		}
+		Menu5(clas, a, result, score, i);
+	}
+	else
+		NotF();
 }
 
 void Menu()
@@ -466,7 +604,7 @@ void Menu()
 	} while (option != 2);
 }
 
-void Menu2(List &clas, Student &a)
+void Menu2(List &clas, Student &a,int &score)
 {
 	int option;
 	bool e = false;
@@ -491,53 +629,56 @@ void Menu2(List &clas, Student &a)
 
 	cout << "================================================================" << endl << endl;
 
+	Student b;
+
 	do
 	{
 		switch (option)
 		{
 		case 1:
-			Insert(clas, a);
-			Menu2(clas,a);
+			 b = Insert(a,score);
+			 clas.Add2(b);
+			Menu2(clas,a, score);
 			break;
 		case 2:
 			if(clas.Empty() == true)
 			{	
 				cout << clas;
-				Menu2(clas, a);
+				Menu2(clas, a, score);
 				break;
 			}
 			cout << clas;
-			Menu2(clas,a);
+			Menu2(clas, a, score);
 			break;
 		case 3:
 			if (clas.Empty() == true)
 			{
 				cout << clas;
-				Menu2(clas, a);
+				Menu2(clas, a, score);
 				break;
 			}
-			Menu4(clas, a);
-			Menu2(clas, a);
+			Menu4(clas, a, score);
+			Menu2(clas, a, score);
 			break;
 		case  4:
 			if (clas.Empty() == true)
 			{
 				cout << clas;
-				Menu2(clas, a);
+				Menu2(clas, a, score);
 				break;
 			}
-			Menu3(clas, a);
-			Menu2(clas, a);
+			Menu3(clas, a, score);
+			Menu2(clas, a, score);
 			break;
 		case 5:
 			if (clas.Empty() == true)
 			{
 				cout << clas;
-				Menu2(clas, a);
+				Menu2(clas, a, score);
 				break;
 			}
-			Del(clas);
-			Menu2(clas, a);
+			Del(clas, a, score);
+			Menu2(clas, a, score);
 		case 6:
 			cout << "Bye! ";
 			clas.Free();
@@ -547,7 +688,7 @@ void Menu2(List &clas, Student &a)
 	} while (option != 5);
 }
 
-void Menu3(List &clas, Student &a)
+void Menu3(List &clas, Student &a, int &score)
 {
 	int option;
 
@@ -572,44 +713,40 @@ void Menu3(List &clas, Student &a)
 
 	cout << "================================================================" << endl << endl;
 
-	char *search = Read();
-	Student *z = new Student[10];
-	int count = 0;
+	
 	do
 	{
 		switch (option)
 		{
 		case 1:
-			*z = clas.Search(option, search, count);
-			for (int i = 0; i < count; i++)
-				cout << z[i];
-			Menu2(clas, a);
+			Case1(clas, option, score);
+			Menu2(clas, a, score);
 			break;
 		case 2:
-			cout << clas.Search(option, search, count);
-			Menu2(clas, a);
+			Case1(clas, option, score);
+			Menu2(clas, a, score);
 			break;
 		case 3:
-			cout << clas.Search(option, search, count);
-			Menu2(clas, a);
+			Case1(clas, option, score);
+			Menu2(clas, a, score);
 			break;
 		case 4:
-			cout << clas.Search(option, search, count);
-			Menu2(clas, a);
+			Case1(clas, option, score);
+			Menu2(clas, a, score);
 			break;
 		case 5:
-			cout << clas.Search(option, search, count);
-			Menu2(clas, a);
+			Case2(clas, option, score);
+			Menu2(clas, a, score);
 			break;
 		case 6:
-			Menu2(clas, a);
+			Menu2(clas, a, score);
 			break;
 		}
 
 	} while (option != 6);
 }
 
-void Menu4(List &clas, Student &a)
+void Menu4(List &clas, Student &a, int &score)
 {
 	int option;
 
@@ -638,22 +775,55 @@ void Menu4(List &clas, Student &a)
 		{
 		case 1:
 			clas.Sort(option);
-			Menu2(clas, a);
+			Menu2(clas, a, score);
 			break;
 		case 2:
 			clas.Sort(option);
-			Menu2(clas, a);
+			Menu2(clas, a, score);
 			break;
 		case 3:
 			clas.Sort(option);
-			Menu2(clas, a);
+			Menu2(clas, a, score);
 			break;
 		case 4:
-			Menu2(clas, a);
+			Menu2(clas, a, score);
 			break;
 		}
 
 	} while (option != 4);
+}
+
+void Menu5(List &clas, Student &a,Student **result, int &score, int i)
+{
+	int option = 0;
+	do
+	{
+		cout << "Enter a number of your choice or enter 0 to exit:";
+
+		while (!(cin >> option))
+		{
+			cout << "Error. Enter the correct choice" << endl << "Your choice: ";
+			cin.clear();
+			while (cin.get() != '\n');
+		}
+
+	} while (option < 0 || option > i + 1);
+
+	do
+	{
+		switch (option)
+		{
+		case 0:
+			Menu2(clas, a, score);
+			break;
+		default:
+			option--;
+			clas.Delete2(result, option);
+			Menu2(clas, a, score);
+			break;
+		}
+	} while (option != 0);
+
 }
 
 char *Read()
@@ -689,7 +859,7 @@ bool Num(char *buf)
 	return true;
 }
 
-void Insert(List &clas, Student &a)
+Student Insert(Student &a, int &score)
 {
 	char buf[255];
 	cout << "Enter name: ";
@@ -727,101 +897,9 @@ void Insert(List &clas, Student &a)
 	Check(z, g);
 	a.date[2] = z;
 
-	clas.Add(a);
+	a.count = score;
+	score++;
 
 	cout << endl << "================================================================" << endl << endl;
+	return a;
 }
-
-//void List::Free2(ListElem *x)
-//{
-//	ListElem *Free2 = Begin;
-//
-//	if (x == Free2)
-//	{
-//		Begin = Free2->next;
-//		delete Free2;
-//		return;
-//	}
-//	ListElem *Free3 = Free2->next;
-//
-//	while (Free3)
-//	{
-//		if (Free3 == x)
-//		{
-//			Free2->next = Free3->next;
-//			delete Free3;
-//			return;
-//		}
-//		Free2 = Free3;
-//		Free3 = Free3->next;
-//	}
-//}
-
-//void Menu5(List &clas)
-//{
-//	int option;
-//	do {
-//		cout << "1.Delete" << endl
-//			<< "2.Continue" << endl
-//			<< "Your choice :";
-//
-//		while (!(cin >> option))
-//		{
-//			cout << "Error. Enter the correct choice" << endl << "Your choice: ";
-//			cin.clear();
-//			while (cin.get() != '\n');
-//		}
-//
-//		if (option <1 || option >2) cout << "Error. Enter the correct choice" << endl;
-//	} while (option < 1 || option>2);
-//
-//	cout << "================================================================" << endl << endl;
-//
-//	do
-//	{
-//		switch (option)
-//		{
-//		case 1:
-//			Del(clas);
-//			return;
-//		case 2:
-//			return;
-//		}
-//	} while (option != 2);
-//}
-
-//void List::Show2(ListElem *x)
-//{
-//	ListElem *Show = x;
-//	cout << endl << "================================================================" << endl << endl;
-//	cout << "Name: " << Show->a.name << endl;
-//	cout << "Surname: " << Show->a.surname << endl;
-//	cout << "Patronymic: " << Show->a.patronymic << endl;
-//	cout << "Phone number: " << Show->a.phone_number << endl;
-//	cout << "Date" << endl;
-//	cout << "Day: " << Show->a.date[0] << endl;
-//	cout << "Month: " << Show->a.date[1] << endl;
-//	cout << "Year: " << Show->a.date[2] << endl;
-//	cout << endl << "================================================================" << endl << endl;
-//
-//}
-
-//void List::Show()
-//{
-//	ListElem *Show = Begin;
-//
-//	while (Show != NULL)
-//	{
-//		cout << "================================================================" << endl << endl;
-//		cout << "Name: " << Show->a.name << endl;
-//		cout << "Surname: " << Show->a.surname << endl;
-//		cout << "Patronymic: " << Show->a.patronymic << endl;
-//		cout << "Phone number: " << Show->a.phone_number << endl;
-//		cout << "Date" << endl;
-//		cout << "Day: " << Show->a.date[0] << endl;
-//		cout << "Month: " << Show->a.date[1] << endl;
-//		cout << "Year: " << Show->a.date[2] << endl;
-//		cout << "================================================================" << endl << endl;
-//		Show = Show->next;
-//	}
-//}
