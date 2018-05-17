@@ -16,16 +16,17 @@ public:
 	int count;
 
 	~Student()
-	{ 
-		cout << "+" << endl;
+	{
+		cout << endl << "b" << endl;
 		delete[] surname;
 		delete[] name;
 		delete[] patronymic;
 		delete[] phone_number;
+		cout << "e" << endl;
 	};
 };
 
-class List 
+class List
 {
 private:
 	struct ListElem
@@ -41,8 +42,8 @@ public:
 	friend ostream& operator << (ostream &a, const List &b);
 	friend ostream& operator << (ostream &a, const Student &b);
 	void Add(const Student &a);
-	void Delete2(Student **result, int &score,int i);
-	void Sort(int option);	
+	void Delete2(Student **result, int &score, int i);
+	void Sort(int option);
 	void Free();
 	bool Empty();
 
@@ -68,7 +69,7 @@ Student** List::Search(int option, char *search, int &count, int &score)
 		if (option == 3) x = Search->a.patronymic;
 		if (option == 4) x = Search->a.phone_number;
 
-		if (strcmp(x, search)==0)
+		if (strcmp(x, search) == 0)
 		{
 			y[count] = &Search->a;
 			count++;
@@ -125,8 +126,8 @@ Student** List::Delete(char *name, char *surname, char *patronymic, int &count, 
 
 	while (Search)
 	{
-		if (strcmp(name, Search->a.name)==0 && strcmp(surname, Search->a.surname)==0 && strcmp(patronymic, Search->a.patronymic) == 0)
-		{	
+		if (strcmp(name, Search->a.name) == 0 && strcmp(surname, Search->a.surname) == 0 && strcmp(patronymic, Search->a.patronymic) == 0)
+		{
 			y[count] = &Search->a;
 			count++;
 		}
@@ -288,9 +289,9 @@ void List::Delete2(Student **result, int &score, int i)
 
 }
 
-void List::Sort(int option) 
+void List::Sort(int option)
 {
-	int x,y,z;
+	int x, y, z;
 	ListElem *New = NULL;
 	while (Begin != NULL)
 	{
@@ -342,7 +343,7 @@ void List::Sort(int option)
 	} while (New);
 }
 
-void List::Free() 
+void List::Free()
 {
 	while (Begin != NULL)
 	{
@@ -372,7 +373,7 @@ void Menu4(List &clas, Student &a, int &score);
 void Menu5(List &clas, Student &a, Student **result, int &score, int i);
 void Check(int &x, string &y);
 bool Num(char *buf);
-Student Insert(List &clas, Student &a, int &score);
+void Insert(List &clas, Student &a, int &score);
 
 
 int main()
@@ -383,16 +384,16 @@ int main()
 	Student a;
 	Menu();
 	Insert(clas, a, score);
-	Menu2(clas,a, score);
+	Menu2(clas, a, score);
 
 	system("pause");
 	return 0;
 }
 
 
-Student Insert(List &clas, Student &a, int &score)
+void Insert(List &clas, Student &a, int &score)
 {
-	char buf[255];
+	cin.ignore();
 	cout << "Enter name: ";
 	a.name = Read();
 
@@ -403,13 +404,15 @@ Student Insert(List &clas, Student &a, int &score)
 	a.patronymic = Read();
 
 	cout << "Enter phone number: ";
-	cin >> buf;
+
+	char buf[255];
+	cin.getline(buf, 255);
 	while (!Num(buf)) {
 		cout << "[Error] Only numbers" << endl;
 		cout << "Enter phone number: ";
 		cin >> buf;
 	}
-	a.phone_number = new char[strlen(buf)+1];
+	a.phone_number = new char[strlen(buf) + 1];
 	strcpy(a.phone_number, buf);
 
 	cout << "Date" << endl;
@@ -433,7 +436,6 @@ Student Insert(List &clas, Student &a, int &score)
 
 	clas.Add(a);
 	cout << endl << "================================================================" << endl << endl;
-	return a;
 }
 
 void NotF()
@@ -445,7 +447,7 @@ void NotF()
 
 int *Date()
 {
-	int *date= new int[3];
+	int *date = new int[3];
 
 	cout << "Enter day:";
 	cin >> date[0];
@@ -457,11 +459,12 @@ int *Date()
 	return date;
 }
 
-void Case1(List &clas, int option, int &score) 
+void Case1(List &clas, int option, int &score)
 {
 	Student **result;
 	int count = 0;
 
+	cin.ignore();
 	char *search = Read();
 
 	result = clas.Search(option, search, count, score);
@@ -531,24 +534,28 @@ void Emp(bool x)
 	}
 }
 
-void Del(List &clas,Student &a , int &score)
+void Del(List &clas, Student &a, int &score)
 {
-	int count = 0;
 
+	int count = 0;
+	cin.ignore();
 	char buf[255];
 	cout << "Name: ";
-	cin >> buf;
-	char *del = new char[strlen(buf)];
+
+	cin.getline(buf, 255);
+	char *del = new char[strlen(buf)+1];
 	strcpy(del, buf);
 
 	cout << "Surname: ";
-	cin >> buf;
-	char *del1 = new char[strlen(buf)];
+
+	cin.getline(buf, 255);
+	char *del1 = new char[strlen(buf)+1];
 	strcpy(del1, buf);
 
 	cout << "Patronymic: ";
-	cin >> buf;
-	char *del2 = new char[strlen(buf)];
+
+	cin.getline(buf, 255);
+	char *del2 = new char[strlen(buf)+1];
 	strcpy(del2, buf);
 
 	Student **result;
@@ -561,7 +568,7 @@ void Del(List &clas,Student &a , int &score)
 	{
 		for (; i < count; i++)
 		{
-			cout << endl << i+1 << ":" << *result[i];
+			cout << endl << i + 1 << ":" << *result[i];
 		}
 		Menu5(clas, a, result, score, i);
 	}
@@ -604,7 +611,7 @@ void Menu()
 	} while (option != 2);
 }
 
-void Menu2(List &clas, Student &a,int &score)
+void Menu2(List &clas, Student &a, int &score)
 {
 	int option;
 	bool e = false;
@@ -637,11 +644,11 @@ void Menu2(List &clas, Student &a,int &score)
 		{
 		case 1:
 			Insert(clas, a, score);
-			Menu2(clas,a, score);
+			Menu2(clas, a, score);
 			break;
 		case 2:
-			if(clas.Empty() == true)
-			{	
+			if (clas.Empty() == true)
+			{
 				cout << clas;
 				Menu2(clas, a, score);
 				break;
@@ -681,6 +688,7 @@ void Menu2(List &clas, Student &a,int &score)
 		case 6:
 			cout << "Bye! ";
 			clas.Free();
+			cout << "-";
 			system("pause");
 			exit(0);
 		}
@@ -708,7 +716,7 @@ void Menu3(List &clas, Student &a, int &score)
 		}
 
 		if (option < 1 || option >6) cout << "Error. Enter the correct choice" << endl;
-	} while (option < 1|| option > 6);
+	} while (option < 1 || option > 6);
 
 	cout << "================================================================" << endl << endl;
 
@@ -754,7 +762,7 @@ void Menu4(List &clas, Student &a, int &score)
 			<< "3.Sort by year" << endl
 			<< "4.Exit" << endl
 			<< "Your choice :";
-		 
+
 		while (!(cin >> option))
 		{
 			cout << "Error. Enter the correct choice" << endl << "Your choice: ";
@@ -791,7 +799,7 @@ void Menu4(List &clas, Student &a, int &score)
 	} while (option != 4);
 }
 
-void Menu5(List &clas, Student &a,Student **result, int &score, int i)
+void Menu5(List &clas, Student &a, Student **result, int &score, int i)
 {
 	int option = 0;
 	cout << i << endl;
@@ -817,7 +825,7 @@ void Menu5(List &clas, Student &a,Student **result, int &score, int i)
 			break;
 		default:
 			option--;
-			clas.Delete2(result, score ,option);
+			clas.Delete2(result, score, option);
 			Menu2(clas, a, score);
 			break;
 		}
@@ -828,8 +836,8 @@ void Menu5(List &clas, Student &a,Student **result, int &score, int i)
 char *Read()
 {
 	char buf[255];
-	cin >> buf;
-	char* str = new char[strlen(buf)+1];
+	cin.getline(buf, 255);
+	char* str = new char[strlen(buf) + 1];
 	strcpy(str, buf);
 	return str;
 }
@@ -857,4 +865,3 @@ bool Num(char *buf)
 	}
 	return true;
 }
-
