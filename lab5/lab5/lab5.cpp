@@ -17,12 +17,10 @@ public:
 
 	~Student()
 	{
-		cout << endl << "b" << endl;
 		delete[] surname;
 		delete[] name;
 		delete[] patronymic;
 		delete[] phone_number;
-		cout << "e" << endl;
 	};
 };
 
