@@ -143,15 +143,25 @@ public:
         }
     }
 
-    Container* MoveIn()
+    Container** Search(int &count)
     {
+        Container** MoveIn = new Container*[Score];
         for(int i=0;i<Score;i++) {
             if(Array[i]->getType() == 0) {
-                Container *MoveIn = (Container*)Array[i];
-                MoveIn->parrent = this;
-                return  MoveIn;
+                MoveIn[count] = (Container*)Array[i];
+                count++;
             }
         }
+        if(count != 0)
+            return MoveIn;
+        else
+            return nullptr;
+    }
+
+    Container* MoveIN(Container **MoveIn, int option)
+    {
+        MoveIn[option]->parrent = this;
+        return MoveIn[option];
     }
 
     Container* MoveOUT()
@@ -198,6 +208,8 @@ int EnterInt();
 float EnterFloat();
 bool EnterBool();
 void fileOutput(char* buffer, int i);
+void MoveInFunc(Container *Main);
+void MenuOfChoise (Container *Main, Container **MoveIn, int count);
 
 
 int main()
@@ -248,8 +260,7 @@ void Menu(Container *Main)
                 break;
             }
             case 4: {
-                Container *MoveIn = Main->MoveIn();
-                Menu(MoveIn);
+                MoveInFunc(Main);
                 break;
             }
             case 5: {
@@ -271,6 +282,66 @@ void Menu(Container *Main)
         }
     }while(option!=6);
 
+}
+
+void MoveInFunc(Container *Main)
+{
+    int count=0;
+    Container **MoveIn = Main->Search(count);
+    if(MoveIn != nullptr) {
+        if (count == 1)
+            Menu(Main->MoveIN(MoveIn, 0));
+        else
+        {
+            int secondCount;
+            char* show = new char[255];
+            for(int i=0;i < count;i++)
+            {
+                secondCount = 0;
+                MoveIn[i]->ToString(show, secondCount);
+                cout << i+1 << ":";
+                for(int j=0;j < secondCount;j++)
+                    cout << show[j];
+                cout << "\n\n";
+            }
+            delete[] show;
+            MenuOfChoise(Main, MoveIn, count);
+        }
+    }
+    else
+        cout << "Not Found" << endl;
+    Menu(Main);
+}
+
+void MenuOfChoise (Container *Main, Container **MoveIn, int count)
+{
+    int option = 0;
+    do
+    {
+        cout << "Enter a number of your choice or enter 0 to exit:";
+        cout << "Enter:";
+        while (!(cin >> option))
+        {
+            cout << "Error. Enter the correct choice" << endl << "Your choice: ";
+            cin.clear();
+            while (cin.get() != '\n');
+        }
+
+    } while (option < 0 || option > count);
+
+    do
+    {
+        switch (option)
+        {
+            case 0:
+                Menu(Main);
+                break;
+            default:
+                --option;
+                Menu(Main->MoveIN(MoveIn, option));
+                break;
+        }
+    } while (option != 0);
 }
 
 void fileOutput(char* buffer, int length)
