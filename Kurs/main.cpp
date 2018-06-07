@@ -3,8 +3,6 @@
 
 using namespace std;
 
-enum MainM { EnterM = 1, ShowAll, Show, Stat, ExitM};
-
 class Train {
     char* Number;
     char* Station;
@@ -30,7 +28,6 @@ Train::Train(char* number, char* station, char* time) {
     strcpy(Time, time);
 }
 Train::Train(Train &train) {
-    cout << "+\n";
     this->Number = new char[strlen(train.getNumber())+1];
     strcpy(this->Number, train.getNumber());
     this->Station = new char[strlen(train.getStation())+1];
@@ -67,23 +64,24 @@ Train::~Train() {
     delete Time;
 }
 
+
 template <class TKey, class TValue>
 class Collection{
     struct Key_Value {
-        TKey Key;
-        TValue Value;
+        TKey* Key;
+        TValue* Value;
     };
     struct ListElem {
         Key_Value *KeyValue;
         ListElem *Next;
-        TKey getKey() {
-            TKey newKey = KeyValue->Key;
+        TKey* getKey() {
+            TKey* newKey = KeyValue->Key;
             return newKey;
         }
     };
     ListElem *Begin = nullptr;
 public:
-    void AddEl(TKey& tKey, TValue& tValue) {
+    void AddElem(TKey*& tKey, TValue*& tValue) {
         if(Begin == nullptr) {
             Begin = new ListElem;
             Begin->KeyValue= new Key_Value{tKey, tValue};
@@ -104,7 +102,8 @@ public:
             Add->Next = nullptr;
         }
     }
-    Train** ShowByKey(TKey& tKey, int& count) {
+    template <typename T>
+    TValue** Search(T tKey,int& count) {
         int Score = 0;
         ListElem *Scroll = Begin;
         while (Scroll)
@@ -114,15 +113,16 @@ public:
         }
 
         ListElem *Search = Begin;
-        Train** y = new Train*[Score];
+        TValue** y = new TValue*[Score];
 
-        while(Search) {
-            if(strcmp(Search->getKey(), tKey)==0) {
-                y[count] = Search->KeyValue->Value;
-                count++;
+        while (Search)
+        {
+            if(*Search->getKey() == *tKey) {
+                y[count++] = Search->KeyValue->Value;
             }
             Search = Search->Next;
         }
+
         if (count == 0)
         {
             y = nullptr;
@@ -131,7 +131,7 @@ public:
         else
             return y;
     }
-    Train** SearchByStation(char* stat, int& count) {
+    TValue** Search(char* tKey,int& count) {
         int Score = 0;
         ListElem *Scroll = Begin;
         while (Scroll)
@@ -141,16 +141,16 @@ public:
         }
 
         ListElem *Search = Begin;
-        Train** y = new Train*[Score];
+        TValue** y = new TValue*[Score];
 
-        while (Search) {
-            Train train = *Search->KeyValue->Value;
-            if(strcmp(train.getStation(), stat)==0) {
-                y[count] = Search->KeyValue->Value;
-                count++;
+        while (Search)
+        {
+            if(strcmp(Search->getKey(),tKey) == 0 ) {
+                y[count++] = Search->KeyValue->Value;
             }
-            Search =Search->Next;
+            Search = Search->Next;
         }
+
         if (count == 0)
         {
             y = nullptr;
@@ -159,123 +159,39 @@ public:
         else
             return y;
     }
+
 };
 
-void MainMenu(Collection<char*,Train*>& Main);
-void EnterKV(Collection<char*, Train*>& Main);
-void ShowByKey(Collection<char*, Train*>& Main);
-void SearchByStation(Collection<char*, Train*>& Main);
-void NotF();
 char* Enter();
 
-
 int main() {
-    Collection<char*,Train*> Main;
-    MainMenu(Main);
+
+    Collection<char, Train> coll;
+
+    auto *x= Enter();
+
+    auto *num = Enter();
+    auto *stat = Enter();
+    auto *time = Enter();
+
+
+    auto *train = new Train(num,stat,time);
+
+    coll.AddElem(x, train);
+
+    auto *key = Enter();
+
+    int count=0;
+
+    auto **result = coll.Search(key, count);
+
+    for(int i=0;i< count;i++)
+        cout << *result[i];
+
     return 0;
 }
 
-void MainMenu(Collection<char*,Train*>& Main){
-    bool run = true;
-    int option = EnterM;
-    while(run) {
-        do {
-            cout << "1.Enter\n"
-                 << "2.ShowAll\n"
-                 << "3.Show\n"
-                 << "4.Station\n"
-                 << "5.Exit\n";
-            while (!(cin >> option))
-            {
-                cout << "Error. Enter the correct choice" << endl << "Your choice: ";
-                cin.clear();
-                while (cin.get() != '\n');
-            }
-            if (option <1 || option >5) cout << "Error. Enter the correct choice" << endl;
-
-        }while(option < 1 |option > 5);
-
-        switch (option) {
-            case EnterM: {
-                EnterKV(Main);
-                break;
-            }
-            case ShowAll: {
-                break;
-            }
-            case Show: {
-                ShowByKey(Main);
-                break;
-            }
-            case Stat: {
-                SearchByStation(Main);
-                break;
-            }
-            case ExitM: {
-                cout << "Bye!\n";
-                cin.ignore().get();
-                exit(0);
-            }
-        }
-    }
-}
-
-void EnterKV(Collection<char*, Train*>& Main) {
-    cin.ignore();
-    cout << "Enter number of train:";
-    char* Num = Enter();
-
-    cout << "Enter station:";
-    char* Station = Enter();
-
-    cout << "Enter time:";
-    char* Time = Enter();
-
-    Train *train = new Train(Num, Station, Time);
-
-
-    Main.AddEl(Num, train);
-}
-
-void ShowByKey(Collection<char*, Train*>& Main) {
-    cin.ignore();
-    cout << "Enter number of train:";
-    char* newKey = Enter();
-
-    Train** result;
-    int count =0;
-    result = Main.ShowByKey(newKey, count);
-    if (result != nullptr)
-        for (int i = 0; i < count; i++)
-            cout << *(result[i]);
-    else
-        NotF();
-}
-
-void SearchByStation(Collection<char*, Train*>& Main) {
-    cin.ignore();
-    cout << "Enter station:";
-    char* Stat = Enter();
-
-    Train** result;
-    int count =0;
-    result = Main.SearchByStation(Stat, count);
-    if (result != nullptr)
-        for (int i = 0; i < count; i++)
-            cout << *(result[i]);
-    else
-        NotF();
-}
-
-void NotF()
-{
-    cout << "================================================================" << endl << endl;
-    cout << " NOT FOUND" << endl;
-    cout << "================================================================" << endl << endl;
-}
-
-char* Enter()
-{
+char* Enter() {
     char buff[255];
     cin.getline(buff, 255);
     char* newChar = new char[strlen(buff)+1];
