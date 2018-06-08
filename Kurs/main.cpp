@@ -35,7 +35,7 @@ public:
             Begin->Next = nullptr;
         }
         else {
-            ListElem *Add = new ListElem;
+            auto *Add = new ListElem;
             Add->KeyValue= new Key_Value{tKey, tValue};
 
             ListElem *p = Begin;
@@ -134,11 +134,12 @@ public:
     }
     friend istream& operator >> (istream& stream, Collection& collection) {
         cin.ignore();
-        cout <<"Enter key:";
-        auto *tKey= Enter();
 
         TValue *tValue;
         stream >> tValue;
+
+        TKey* tKey;
+        *tValue >> tKey;
 
         collection.AddElem(tKey, tValue);
 
@@ -163,13 +164,34 @@ public:
     char* getNumber();
     char* getStation();
     char* getTime();
+
     void SaveFile(char* buff, int &i) {
-        char* newBuff = new char[255];
+        auto* newBuff = new char[255];
+
+        /*strcpy(newBuff,"Number:");
+        for(int j=0;j < strlen(newBuff);i++, j++)
+            buff[i] = newBuff[j];*/
         strcpy(newBuff,this->getNumber());
         for(int j=0;j < strlen(newBuff);i++, j++)
             buff[i] = newBuff[j];
+        buff[i++] = ',';
+
+        /*strcpy(newBuff,"Station:");
+        for(int j=0;j < strlen(newBuff);i++, j++)
+            buff[i] = newBuff[j];*/
+        strcpy(newBuff, this->getStation());
+        for(int j=0;j < strlen(newBuff);i++, j++)
+            buff[i] = newBuff[j];
+        buff[i++] = ',';
+
+        /*strcpy(newBuff,"Time:");
+        for(int j=0;j < strlen(newBuff);i++, j++)
+            buff[i] = newBuff[j];*/
+        strcpy(newBuff, this->getTime());
+        for(int j=0;j < strlen(newBuff);i++, j++)
+            buff[i] = newBuff[j];
         delete[] newBuff;
-        buff[i++] = ' ';
+        buff[i++] = '\n';
     }
     friend ostream& operator << (ostream &stream, Train &train);
     friend Train& operator >> (istream& stream, Train*& train) {
@@ -182,6 +204,49 @@ public:
 
         train = new Train(num,stat,time);
         return *train;
+    }
+    char*& operator >> (char*& key) {
+        key = new char[255];
+        strcpy(key, Number);
+        return key;
+    }
+    friend ifstream& operator >> (ifstream& stream, Train*& train) {
+
+            auto *num= new char[255];
+            auto *stat= new char[255];
+            auto *time= new char[255];
+            auto* newBuff = new char[255];
+            stream.getline(newBuff, 255);
+            if(stream.eof())
+                return stream;
+            int i=0;
+
+            int k = 0;
+            while (newBuff[i] != ',')
+            {
+                num[k++] = newBuff[i++];
+            }
+            num[k] = '\0';
+            i++;
+
+            int l = 0;
+            while (newBuff[i] != ',')
+            {
+                stat[l++] = newBuff[i++];
+            }
+            stat[l] = '\0';
+            i++;
+
+            int y = 0;
+            while (newBuff[i] != '\0')
+            {
+                time[y++] = newBuff[i++];
+            }
+            time[y] = '\0';
+
+            train = new Train(num,stat,time);
+
+        return stream;
     }
     ~Train();
 };
@@ -213,7 +278,7 @@ char* Train::getTime() {
 }
 ostream& operator << (ostream &stream, Train &train) {
     stream << "\n";
-    stream << "Number: "<<train.getNumber() << endl;
+    stream << "Number:"<<train.getNumber() << endl;
     stream << "Station:" << train.getStation() << endl;
     stream << "Time:" << train.getTime() << endl;
     stream << "\n";
@@ -228,13 +293,14 @@ Train::~Train() {
 void MainMenu(Collection<char,Train>& Main);
 void ShowByKey(Collection<char, Train>& Main);
 void SearchByStation(Collection<char, Train>& Main);
+void LoadF(Collection<char, Train>& Main);
 void SaveF(Collection<char, Train>& Main);
-void ResultOutput(char *buffer, int length);
+void ResultOutput(char *buff, int i);
 void NotF();
 
 int main() {
-
     Collection<char, Train> coll;
+    LoadF(coll);
     MainMenu(coll);
 
     return 0;
@@ -316,23 +382,42 @@ void SearchByStation(Collection<char, Train>& Main) {
     delete[] result;
 }
 
+void LoadF(Collection<char, Train>& Main) {
+    ifstream file("result.txt");
+
+    auto* key = new char[255];
+    if(file.is_open()) {
+        while(true)
+        {
+            Train *train;
+            file >> train;
+            if(file.eof())
+                break;
+            *train >> key;
+            Main.AddElem(key,train);
+        }
+
+    }
+
+}
+
 void SaveF(Collection<char, Train>& Main) {
-    char* buff= new char[255];
+    auto* buff= new char[255];
     int i=0;
     int count =0;
-    auto** result = Main.Search(count);
-    for(int j=0;j<count;j++)
-        result[j]->SaveFile(buff, i);
-    cout << buff;
+    auto** Value = Main.Search(count);
+    for(int j=0;j<count;j++) {
+
+        Value[j]->SaveFile(buff, i);
+    }
     ResultOutput(buff, i);
 }
 
-void ResultOutput(char *buff, int i)
-{
+void ResultOutput(char *buff, int i) {
     ofstream ofile("result.txt", ios::app);
     for (int j = 0; j < i; j++)
     {
-        ofile << buffer[j];
+        ofile << buff[j];
     }
     ofile.close();
 }
