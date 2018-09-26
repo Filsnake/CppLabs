@@ -1,0 +1,3 @@
+/home/filsnake/Документы/CppLabs/Curs/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/filsnake/Документы/CppLabs/Curs/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/filsnake/Документы/CppLabs/Curs/cmake-build-debug/CMakeFiles/Curs.dir

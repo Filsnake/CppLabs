@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/filsnake/Документы/CppLabs/Curs/main.cpp
+iostream
+-
+cstring
+-
+fstream
+-
+stdlib.h
+-
+
